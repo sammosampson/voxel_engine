@@ -1,8 +1,8 @@
 use legion::*;
-use voxel_engine_app::events;
-use voxel_engine_app::input;
-use voxel_engine_app::math;
-use voxel_engine_app::debug;
+use crate::events;
+use crate::input;
+use crate::math;
+use crate::debug;
 
 #[system(for_each)]
 pub fn mouse_input(

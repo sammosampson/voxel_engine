@@ -1,23 +1,24 @@
 use std::time::Instant;
 use legion::*;
-use voxel_engine_app::events;
-use voxel_engine_app::rendering;
+use crate::debug;
+use crate::events;
+use crate::rendering;
 use crate::systems;
 
 pub struct Application {
     pub world: World, 
     pub resources: Resources,
-    schedule: Schedule
-}
-
-impl Into<voxel_engine_app::HotLoadableApplicationState> for Application {
-    fn into(self) -> voxel_engine_app::HotLoadableApplicationState {
-        voxel_engine_app::HotLoadableApplicationState::new(self.world, self.resources, self.schedule)
-    }
+    schedule: Schedule,
+    event_loop: events::SystemEventLoop,
+    screen_renderer: rendering::ScreenRenderer
 }
 
 impl Application {
     pub fn build() -> Self {
+        debug::initialise_debugging();
+        let event_loop = events::create_system_event_loop();
+        let screen_renderer = rendering::ScreenRenderer::new(&event_loop.get_loop());
+
         let world = build_world();
         let resources = build_resources();
         let schedule = build_schedule();
@@ -25,14 +26,47 @@ impl Application {
         Self {
             world,
             resources, 
-            schedule
+            schedule,
+            event_loop,
+            screen_renderer
         }
     }
 
-    pub fn reload(state: &mut voxel_engine_app::HotLoadableApplicationState) {
-        let resources = build_resources();
-        let schedule = build_schedule();
-        state.reload(resources, schedule);
+    pub fn run(&mut self) {
+        loop {
+            if self.should_exit() {
+                return;
+            }
+    
+            self.run_loop();
+        }
+    }
+
+    fn run_loop(&mut self) {
+        self.process_events();
+        self.execute_schedule();        
+        self.render();
+    }
+
+    fn process_events(&mut self) {
+        let mut event_producer = &mut self.resources.get_mut::<events::SystemEventProducer>().unwrap();
+        let mut event_channel = &mut self.resources.get_mut::<shrev::EventChannel::<events::SystemEvent>>().unwrap();
+        self.event_loop.run(&mut event_producer, &mut event_channel, &mut self.screen_renderer);
+    }
+
+    fn execute_schedule(&mut self) {
+        &mut self.schedule.execute(&mut self.world, &mut self.resources);
+    }
+
+    fn render(&mut self) {
+        let mut event_producer = &mut self.resources.get_mut::<events::SystemEventProducer>().unwrap();
+        let mut world_graph = &mut self.resources.get_mut::<rendering::WorldRenderGraph>().unwrap();
+        let mut editor_graph = &mut self.resources.get_mut::<rendering::EditorRenderGraph>().unwrap();
+        self.screen_renderer.render(&mut editor_graph, &mut world_graph, &mut event_producer);
+    }
+    
+    pub fn should_exit(&mut self) -> bool {
+        ExitStateNotifier::should_exit(&mut self.resources)
     }
 }
 
@@ -46,7 +80,7 @@ fn build_world() -> World {
 }
 
 fn build_resources() -> Resources {
-    let exit_state_notifier = voxel_engine_app::create_exit_state_notifier();
+    let exit_state_notifier = create_exit_state_notifier();
     let system_event_producer = events::create_system_event_producer();
     let mut system_event_channel = events::create_system_event_channel();
     let event_channel_registrar = events::create_system_event_channel_registrar(&mut system_event_channel);
@@ -92,4 +126,23 @@ fn build_schedule() -> Schedule {
         .add_thread_local(systems::set_editor_state_on_graph_system())
         .add_system(systems::aggregate_statistics_system())
         .build()
+}
+
+fn create_exit_state_notifier() -> ExitStateNotifier {
+    ExitStateNotifier::default()
+}
+
+#[derive(Default)]
+pub struct ExitStateNotifier {
+    pub should_exit: bool
+}
+
+impl ExitStateNotifier {
+    fn should_exit(resources: &mut legion::Resources) -> bool {
+        let notifier = resources
+            .get::<ExitStateNotifier>()
+            .unwrap();
+    
+        notifier.should_exit
+    }
 }

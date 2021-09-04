@@ -1,10 +1,10 @@
 
 use std::collections::HashMap;
 use legion::*;
-use voxel_engine_app::cameras;
-use voxel_engine_app::rendering;
-use voxel_engine_app::time;
-use voxel_engine_app::debug;
+use crate::cameras;
+use crate::rendering;
+use crate::time;
+use crate::debug;
 use crate::graph;
 
 #[system(for_each)]

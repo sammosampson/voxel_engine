@@ -2,8 +2,8 @@
 use legion::*;
 use legion::world::*;
 use itertools::*;
-use voxel_engine_app::debug;
-use voxel_engine_app::time;
+use crate::debug;
+use crate::time;
 
 pub fn add_debugging_to_world(world: &mut legion::World) {
     let all_counters = debug::CycleCounter::get_all();

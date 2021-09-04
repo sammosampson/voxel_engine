@@ -1,6 +1,13 @@
-use voxel_engine_app::math;
-use voxel_engine_app::terrain;
+use crate::terrain;
 use super::chunk;
+use crate::math;
+
+#[derive(Debug, Clone, Copy)]
+pub enum BlockType {
+    Air,
+    Grass,
+    Brick
+}
 
 #[derive(Debug, Default, Copy, Clone, Eq, PartialEq)]
 pub struct ChunkBlockPosition {
@@ -79,12 +86,12 @@ impl Iterator for ChunkBlockPositionIterator {
 
 #[derive(Clone, Copy)]
 pub struct Block {
-    pub block_type: terrain::BlockType,
+    pub block_type: BlockType,
     position: ChunkBlockPosition
 }
 
 impl Block {
-    pub fn new(chunk: &terrain::Chunk, position: ChunkBlockPosition) -> Self {
+    pub fn new(chunk: &chunk::Chunk, position: ChunkBlockPosition) -> Self {
         Self {
             block_type: chunk::get_block(chunk, position),
             position

@@ -1,9 +1,9 @@
 use legion::*;
 use legion::systems::CommandBuffer;
-use voxel_engine_app::debug;
-use voxel_engine_app::rendering;
-use voxel_engine_app::position;
-use voxel_engine_app::terrain;
+use crate::debug;
+use crate::rendering;
+use crate::position;
+use crate::terrain;
 use crate::terrain::*;
 
 pub fn add_terrain_to_world(world: &mut legion::world::World) {

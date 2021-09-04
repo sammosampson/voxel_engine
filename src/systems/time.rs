@@ -2,7 +2,7 @@
 use std::time::Instant;
 use legion::*;
 use legion::world::*;
-use voxel_engine_app::time;
+use crate::time;
 
 #[system(simple)]
 #[read_component(time::ElapsedTime)]

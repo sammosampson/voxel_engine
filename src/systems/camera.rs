@@ -1,10 +1,10 @@
 use legion::*;
-use voxel_engine_app::cameras;
-use voxel_engine_app::rendering;
-use voxel_engine_app::math;
-use voxel_engine_app::events;
-use voxel_engine_app::input;
-use voxel_engine_app::debug;
+use crate::cameras;
+use crate::rendering;
+use crate::math;
+use crate::events;
+use crate::input;
+use crate::debug;
 
 pub fn add_cameras_to_world(world: &mut legion::world::World) {
     world.push((

@@ -12,6 +12,6 @@ pub fn get_image(file_content: &[u8], image_format: image::ImageFormat) -> RawIm
 pub fn get_normal_texture(display: &Display) -> glium::texture::Texture2d {
     glium::texture::Texture2d::new(
         display, 
-        get_image(&include_bytes!("../../../../images/brick-normal.png")[..], image::ImageFormat::Png))
+        get_image(&include_bytes!("../../../images/brick-normal.png")[..], image::ImageFormat::Png))
         .unwrap()
 }

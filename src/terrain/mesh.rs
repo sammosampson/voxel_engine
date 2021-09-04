@@ -1,8 +1,8 @@
-use voxel_engine_app::mesh;
-use voxel_engine_app::rendering;
-use voxel_engine_app::math;
-use voxel_engine_app::terrain;
+use crate::mesh;
+use crate::rendering;
+use crate::math;
 use super::chunk;
+use super::block;
 
 const FACE_SIZE:f32 = 1.0;
 pub struct ChunkMeshFace {
@@ -85,12 +85,12 @@ impl ChunkMeshFace {
 }
 
 pub trait Tesselate {
-    fn tesselate(&mut self, chunk: &terrain::Chunk) {
+    fn tesselate(&mut self, chunk: &chunk::Chunk) {
         for block in chunk::ChunkIterator::new(chunk) {
             match block.block_type {
-                terrain::BlockType::Air => {},
-                terrain::BlockType::Grass => self.add_face( block.absolute_position(), rendering::Colour::green()),
-                terrain::BlockType::Brick => self.add_face( block.absolute_position() ,rendering::Colour::grey()),
+                block::BlockType::Air => {},
+                block::BlockType::Grass => self.add_face( block.absolute_position(), rendering::Colour::green()),
+                block::BlockType::Brick => self.add_face( block.absolute_position() ,rendering::Colour::grey()),
             }
         }
     }
@@ -98,37 +98,68 @@ pub trait Tesselate {
     fn add_face(&mut self, centre: math::Vector4, colour: rendering::Colour);
 }
 
-impl Tesselate for terrain::ChunkFrontMesh {
+
+#[derive(Debug, Default, Clone)]
+pub struct ChunkFrontMesh {
+    pub vertices: Vec<mesh::Vertex>
+}
+
+#[derive(Debug, Default, Clone)]
+pub struct ChunkBackMesh {
+    pub vertices: Vec<mesh::Vertex>
+}
+
+#[derive(Debug, Default, Clone)]
+pub struct ChunkTopMesh {
+    pub vertices: Vec<mesh::Vertex>
+}
+
+#[derive(Debug, Default, Clone)]
+pub struct ChunkBottomMesh {
+    pub vertices: Vec<mesh::Vertex>
+}
+
+#[derive(Debug, Default, Clone)]
+pub struct ChunkRightMesh {
+    pub vertices: Vec<mesh::Vertex>
+}
+
+#[derive(Debug, Default, Clone)]
+pub struct ChunkLeftMesh {
+    pub vertices: Vec<mesh::Vertex>
+}
+
+impl Tesselate for ChunkFrontMesh {
     fn add_face(&mut self, centre: math::Vector4, colour: rendering::Colour) {
         ChunkMeshFace::front(centre).tesselate(&mut self.vertices, colour);
     }
 }
 
-impl Tesselate for terrain::ChunkBackMesh {
+impl Tesselate for ChunkBackMesh {
     fn add_face(&mut self, centre: math::Vector4, colour: rendering::Colour) {
         ChunkMeshFace::back(centre).tesselate(&mut self.vertices, colour);
     }
 }
 
-impl Tesselate for terrain::ChunkTopMesh {
+impl Tesselate for ChunkTopMesh {
     fn add_face(&mut self, centre: math::Vector4, colour: rendering::Colour) {
         ChunkMeshFace::top(centre).tesselate(&mut self.vertices, colour);
     }
 }
 
-impl Tesselate for terrain::ChunkBottomMesh {
+impl Tesselate for ChunkBottomMesh {
     fn add_face(&mut self, centre: math::Vector4, colour: rendering::Colour) {
         ChunkMeshFace::bottom(centre).tesselate(&mut self.vertices, colour);
     }
 }
 
-impl Tesselate for terrain::ChunkLeftMesh {
+impl Tesselate for ChunkLeftMesh {
     fn add_face(&mut self, centre: math::Vector4, colour: rendering::Colour) {
         ChunkMeshFace::left(centre).tesselate(&mut self.vertices, colour);
     }
 }
 
-impl Tesselate for terrain::ChunkRightMesh {
+impl Tesselate for ChunkRightMesh {
     fn add_face(&mut self, centre: math::Vector4, colour: rendering::Colour) {
         ChunkMeshFace::right(centre).tesselate(&mut self.vertices, colour);
     }

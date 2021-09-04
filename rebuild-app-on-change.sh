@@ -1,1 +1,0 @@
-RUST_BACKTRACE=1 cargo watch -i "*/runner/**" -i "*/app/**" -x "build --all"

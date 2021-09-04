@@ -1,8 +1,8 @@
 use legion::*;
-use voxel_engine_app::lighting;
-use voxel_engine_app::rendering;
-use voxel_engine_app::debug;
-use voxel_engine_app::math;
+use crate::lighting;
+use crate::rendering;
+use crate::debug;
+use crate::math;
 
 pub fn add_lighting_to_world(world: &mut legion::world::World) {
     world.push((

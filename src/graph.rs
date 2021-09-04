@@ -1,5 +1,5 @@
-use voxel_engine_app::events;
-use voxel_engine_app::rendering;
+use crate::events;
+use crate::rendering;
 
 pub fn create_camera_window() -> rendering::EditorRenderGraphNode {
     let position_label = rendering::EditorRenderGraphNode::Label { 

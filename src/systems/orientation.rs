@@ -1,11 +1,11 @@
 
 use legion::*;
-use voxel_engine_app::debug;
-use voxel_engine_app::math;
-use voxel_engine_app::position;
-use voxel_engine_app::rotation;
-use voxel_engine_app::rendering;
-use voxel_engine_app::time;
+use crate::debug;
+use crate::math;
+use crate::position;
+use crate::rotation;
+use crate::rendering;
+use crate::time;
 
 #[system(par_for_each)]
 pub fn constant_rotation(
