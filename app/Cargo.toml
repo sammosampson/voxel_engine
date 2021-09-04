@@ -1,0 +1,15 @@
+[package]
+name = "voxel_engine_app"
+version = "0.1.0"
+authors = ["Chris Sampson <sammosampson@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+glium = "0.30.0"
+winit = "0.21"
+egui_glium="0.13.1"
+egui="0.13.1"
+legion = "0.3.1"
+paste = "1.0.5"
+shrev = "1.1.1"
+image = "0.23.14"
