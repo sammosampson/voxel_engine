@@ -13,6 +13,7 @@ mod cameras;
 mod lighting;
 mod position;
 mod rotation;
+mod hero;
 
 fn main() {
     application::Application::build().run();

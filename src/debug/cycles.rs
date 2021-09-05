@@ -119,6 +119,7 @@ cycle_counter! {
     TesselateChunkRightMesh,
     MergeChunkMesh,
     SetWorldNodeOrientation,
+    BuildWorldGraphForMesh,
     BuildEditorRenderGraphForStatistics,
     BuildEditorRenderGraphForMeasurements,
     BuildEditorRenderGraphForEditorState,

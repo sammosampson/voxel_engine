@@ -90,10 +90,8 @@ impl Into<math::Vector2> for glium::glutin::event::MouseScrollDelta {
 }
  
 impl From<glium::glutin::event::DeviceEvent> for WrappedSystemEvent {
-    fn from(event: glium::glutin::event::DeviceEvent) -> Self {
-        match event {
-            _ => WrappedSystemEvent::new(events::SystemEvent::Unused)
-        }
+    fn from(_event: glium::glutin::event::DeviceEvent) -> Self {
+        WrappedSystemEvent::new(events::SystemEvent::Unused)
     }
 }
 

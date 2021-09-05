@@ -73,9 +73,9 @@ impl Application {
 fn build_world() -> World {
     let mut world = World::default();
     systems::add_debugging_to_world(&mut world);
-    systems::add_cameras_to_world(&mut world);
     systems::add_lighting_to_world(&mut world);
     systems::add_terrain_to_world(&mut world);
+    systems::add_hero_to_world(&mut world);
     world
 }
 
@@ -113,6 +113,7 @@ fn build_schedule() -> Schedule {
         .add_system(systems::tesselate_chunk_right_faces_system())
         .flush()
         .add_thread_local(systems::merge_chunk_mesh_system())
+        .add_thread_local(systems::build_world_graph_for_mesh_system())
         .flush()
         .add_thread_local(systems::build_editor_render_graph_for_editor_state_system())
         .add_thread_local(systems::build_editor_render_graph_for_statistics_system())

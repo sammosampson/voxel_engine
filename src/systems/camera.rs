@@ -6,18 +6,6 @@ use crate::events;
 use crate::input;
 use crate::debug;
 
-pub fn add_cameras_to_world(world: &mut legion::world::World) {
-    world.push((
-        cameras::Camera {  
-            position: math::Vector4::position(0.5, 0.2, -50.0), 
-            direction: math::Vector4::direction(-0.5, -0.2, 3.0), 
-            up: math::Vector4::direction(0.0, 1.0, 0.0) 
-        },
-        rendering::WindowSize { size: math::Size2d::new(800.0, 600.0) },
-        input::MouseInput::default()
-    ));
-}
-
 #[system(for_each)]
 pub fn set_camera_to_render_view_matrix(
     camera: &cameras::Camera, 

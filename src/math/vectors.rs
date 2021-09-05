@@ -1,5 +1,25 @@
 use std::ops::{Add, Div, Mul, Sub};
 
+pub struct TextureCoordinates {  
+}
+
+impl TextureCoordinates {
+    pub fn bottom_left() -> Vector2 {
+        Vector2::new(0.0, 0.0)
+    }
+
+    pub fn bottom_right() -> Vector2 {
+        Vector2::new(1.0, 0.0)
+    }
+
+    pub fn top_left() -> Vector2 {
+        Vector2::new(0.0, 1.0)
+    }
+
+    pub fn top_right() -> Vector2 {
+        Vector2::new(1.0, 1.0)
+    }
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub struct Vector2 {

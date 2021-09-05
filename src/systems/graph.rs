@@ -6,6 +6,21 @@ use crate::rendering;
 use crate::time;
 use crate::debug;
 use crate::graph;
+use crate::mesh;
+
+#[system(for_each)]
+#[filter(!component::<rendering::RenderGraphSet>())]
+pub fn build_world_graph_for_mesh(
+    entity: &Entity, 
+    mesh: &mesh::Mesh, 
+    #[resource] graph: &mut rendering::WorldRenderGraph,
+    buffer: &mut legion::systems::CommandBuffer,
+) {
+    let timed_block = debug::TimedBlock::start(debug::CycleCounter::BuildWorldGraphForMesh);
+    graph.add_mesh(*entity, mesh.data.clone());
+    buffer.add_component(*entity, rendering::RenderGraphSet::default());
+    timed_block.stop();
+}
 
 #[system(for_each)]
 pub fn set_editor_state_on_graph(

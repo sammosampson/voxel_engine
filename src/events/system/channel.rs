@@ -58,7 +58,7 @@ impl SystemEventProducer {
     }
 
     pub fn push(&mut self, to_push: events::SystemEvent) {
-        self.events.push(to_push.into());
+        self.events.push(to_push);
     }
 
     pub fn drain_to(&mut self, channel: &mut EventChannel::<events::SystemEvent>) {

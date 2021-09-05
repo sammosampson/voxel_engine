@@ -70,8 +70,8 @@ impl WorldRenderGraph {
 
     pub fn draw(&mut self, target_dimensions: (u32, u32), display: &mut glium::Display, target: &mut glium::Frame) {
         let perspective = math::Matrix4x4::perspective(target_dimensions.0, target_dimensions.1);
-        let view = self.view.clone();
-        let light_direction = self.light_direction.clone();
+        let view = self.view;
+        let light_direction = self.light_direction;
 
         for node in self.nodes.values_mut() {
             node.draw(display, target, perspective, view, light_direction)
