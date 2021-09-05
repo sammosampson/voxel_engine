@@ -114,6 +114,7 @@ fn build_schedule() -> Schedule {
         .flush()
         .add_thread_local(systems::merge_chunk_mesh_system())
         .flush()
+        .add_thread_local(systems::build_editor_render_graph_for_editor_state_system())
         .add_thread_local(systems::build_editor_render_graph_for_statistics_system())
         .add_thread_local(systems::build_editor_render_graph_for_camera_system())
         .add_thread_local(systems::build_editor_render_graph_for_measurements_system())

@@ -24,7 +24,7 @@ impl EditorRenderGraph {
     }
 
     pub fn set_state(&mut self, state: &debug::Editor) {
-        self.state = *state;
+        self.state = state.clone();
     }
     
     pub fn add_control(&mut self, control: EditorRenderGraphNode) {
@@ -37,6 +37,10 @@ impl EditorRenderGraph {
 
     pub fn add_float_data(&mut self, item: EditorRenderGraphDataItem, value: f32) {
         self.add_data(item, EditorRenderGraphData::Float { value })
+    }
+
+    pub fn add_boolean_data(&mut self, item: EditorRenderGraphDataItem, value: bool) {
+        self.add_data(item, EditorRenderGraphData::Boolean { value })
     }
 
     pub fn add_vector4_data(&mut self, item: EditorRenderGraphDataItem, value: math::Vector4) {
@@ -65,17 +69,23 @@ impl EditorRenderGraph {
         &self.data
     }
 
+    pub fn is_window_visible(&self, window_name: &str) -> bool {
+        self.state.is_window_visible(window_name)
+    }
+
     pub fn clear_data(&mut self) {
         self.data = HashMap::default();
     }
 }
 
 pub enum EditorRenderGraphNode {
+    SideBar { name: String, children: Vec<EditorRenderGraphNode> },
     Window { name: String, children: Vec<EditorRenderGraphNode> },
     ScrollArea { id: String, children: Vec<EditorRenderGraphNode> },
     Grid { name: String, children: Vec<EditorRenderGraphNode> },
     Row { children: Vec<EditorRenderGraphNode> },
     Rows { children: Vec<EditorRenderGraphNode>, titles: Vec<EditorRenderGraphDataItem>, item: EditorRenderGraphDataItem },
+    Toggle { item: EditorRenderGraphDataItem, click_handler: Box<dyn Fn(bool) -> events::EditorEvent> },
     Label { item: EditorRenderGraphDataItem },
     Text { item: EditorRenderGraphDataItem },
     Numeric { item: EditorRenderGraphDataItem },
@@ -85,6 +95,7 @@ pub enum EditorRenderGraphNode {
 pub enum EditorRenderGraphData {
     Rows { data: Vec<HashMap<EditorRenderGraphDataItem, EditorRenderGraphData>> },
     String { value: String },
+    Boolean { value: bool },
     Float { value: f32 },
     Int { value: u64 },
     Vector4 { value: math::Vector4 }
@@ -92,12 +103,14 @@ pub enum EditorRenderGraphData {
 
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub enum EditorRenderGraphDataItem {
+    MeasurementWindowVisibiity,
     MeasurementRow,
     MeasurementName,
     CycleMeasurement,
     CyclePercentage,
     HitMeasurement,
     ElapsedTime,
+    CameraWindowVisibiity,
     CameraPosition,
     CameraDirection,
     CameraUp,
@@ -106,6 +119,8 @@ pub enum EditorRenderGraphDataItem {
 impl Display for EditorRenderGraphDataItem {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            EditorRenderGraphDataItem::MeasurementWindowVisibiity => f.write_str("Measurements"),
+            EditorRenderGraphDataItem::CameraWindowVisibiity => f.write_str("Camera"),
             EditorRenderGraphDataItem::CycleMeasurement => f.write_str("Cycles"),
             EditorRenderGraphDataItem::CyclePercentage => f.write_str("Cycles %"),
             EditorRenderGraphDataItem::HitMeasurement => f.write_str("Hits"),

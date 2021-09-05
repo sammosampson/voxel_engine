@@ -48,9 +48,11 @@ pub fn move_camera_from_editor(
                 match editor_event {
                     events::EditorEvent::CameraPositionChanged(position) => camera.position = *position,
                     events::EditorEvent::CameraDirectionChanged(direction) => camera.direction = *direction,
-                    events::EditorEvent::CameraUpChanged(up) => camera.up = *up
+                    events::EditorEvent::CameraUpChanged(up) => camera.up = *up,
+                    _ => {}
                 }
-            },_ => {}
+            },
+            _ => {}
         }
     }
     

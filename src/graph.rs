@@ -1,6 +1,32 @@
 use crate::events;
 use crate::rendering;
 
+const MAIN: &str = "Main";
+pub const CAMERA_WINDOW_NAME: &str = "Camera";
+pub const MEASUREMENTS_WINDOW_NAME: &str = "Measurements";
+const MEASUREMENTS_SCROLL: &str = "MeasurementsScroll";
+
+pub fn create_main_sidebar() -> rendering::EditorRenderGraphNode {
+    let elapsed_time = rendering::EditorRenderGraphNode::Numeric { 
+        item: rendering::EditorRenderGraphDataItem::ElapsedTime
+    };
+
+    let camera_toggle = rendering::EditorRenderGraphNode::Toggle {
+        item: rendering::EditorRenderGraphDataItem::CameraWindowVisibiity,
+        click_handler: Box::new(| visible | events::EditorEvent::SetWindowVisibility(visible, CAMERA_WINDOW_NAME.to_string()))
+
+    };
+    let measurements_toggle = rendering::EditorRenderGraphNode::Toggle {
+        item: rendering::EditorRenderGraphDataItem::MeasurementWindowVisibiity,
+        click_handler: Box::new(| visible | events::EditorEvent::SetWindowVisibility(visible, MEASUREMENTS_WINDOW_NAME.to_string()))
+
+    };
+    rendering::EditorRenderGraphNode::SideBar {
+        name: MAIN.to_string(),
+        children: vec!(elapsed_time, camera_toggle, measurements_toggle)
+    }
+}
+
 pub fn create_camera_window() -> rendering::EditorRenderGraphNode {
     let position_label = rendering::EditorRenderGraphNode::Label { 
         item: rendering::EditorRenderGraphDataItem::CameraPosition
@@ -27,7 +53,7 @@ pub fn create_camera_window() -> rendering::EditorRenderGraphNode {
     };
 
     let camera_grid = rendering::EditorRenderGraphNode::Grid { 
-        name: "Camera".to_string(),
+        name: CAMERA_WINDOW_NAME.to_string(),
         children: vec!(
             rendering::EditorRenderGraphNode::Row { children: vec!(position_label, position) },
             rendering::EditorRenderGraphNode::Row { children: vec!(direction_label, direction) }, 
@@ -36,7 +62,7 @@ pub fn create_camera_window() -> rendering::EditorRenderGraphNode {
     };
 
     rendering::EditorRenderGraphNode::Window {
-        name: "Camera".to_string(),
+        name: CAMERA_WINDOW_NAME.to_string(),
         children: vec!(camera_grid)
     }
 }
@@ -75,17 +101,17 @@ pub fn create_measurements_window() -> rendering::EditorRenderGraphNode {
     };
     
     let measurement_grid = rendering::EditorRenderGraphNode::Grid { 
-        name: "Measurements".to_string(),
+        name: MEASUREMENTS_WINDOW_NAME.to_string(),
         children: vec!(time_row, measurement_rows)
     };
     
     let measurement_scroll = rendering::EditorRenderGraphNode::ScrollArea {
-        id: "MeasurementsScroll".to_string(),
+        id: MEASUREMENTS_SCROLL.to_string(),
         children: vec!(measurement_grid)
     };
     
     rendering::EditorRenderGraphNode::Window { 
-        name: "Measurements".to_string(),
+        name: MEASUREMENTS_WINDOW_NAME.to_string(),
         children: vec!(measurement_scroll)
     }
 }

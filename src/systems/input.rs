@@ -60,6 +60,12 @@ pub fn editor_state_from_input(
                     editor_state.editor_visible = !editor_state.editor_visible;
                 }
             },
+            events::SystemEvent::EditorChange(editor_event) => {
+                match editor_event {
+                    events::EditorEvent::SetWindowVisibility(visible, window_name) => editor_state.set_windows_visibility(*visible, window_name.clone()),
+                    _ => {}
+                }
+            }
             _ => {}
         }
     }

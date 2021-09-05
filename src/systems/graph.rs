@@ -28,6 +28,7 @@ pub fn set_editor_controls (
 ) {
     let timed_block = debug::TimedBlock::start(debug::CycleCounter::SetEditorStateOnRenderer);
     
+    graph.add_control(graph::create_main_sidebar());
     graph.add_control(graph::create_camera_window());
     graph.add_control(graph::create_measurements_window());
     
@@ -43,6 +44,19 @@ pub fn build_editor_render_graph_for_statistics(
     let timed_block = debug::TimedBlock::start(debug::CycleCounter::BuildEditorRenderGraphForStatistics);
 
     graph.add_float_data(rendering::EditorRenderGraphDataItem::ElapsedTime, time.seconds * 1000.0);
+    
+    timed_block.stop();
+}
+
+#[system(for_each)]
+pub fn build_editor_render_graph_for_editor_state(
+    editor: &debug::Editor, 
+    #[resource] graph: &mut rendering::EditorRenderGraph
+) {
+    let timed_block = debug::TimedBlock::start(debug::CycleCounter::BuildEditorRenderGraphForEditorState);
+
+    graph.add_boolean_data(rendering::EditorRenderGraphDataItem::CameraWindowVisibiity, editor.is_window_visible(graph::CAMERA_WINDOW_NAME));
+    graph.add_boolean_data(rendering::EditorRenderGraphDataItem::MeasurementWindowVisibiity, editor.is_window_visible(graph::MEASUREMENTS_WINDOW_NAME));
     
     timed_block.stop();
 }

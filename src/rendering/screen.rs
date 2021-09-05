@@ -32,8 +32,7 @@ impl ScreenRenderer {
         let display = create_display(event_loop);
         let editor_renderer = editor::EditorRenderer::new(&display);
         let world_renderer = world::WorldRenderer::new();
-        println!("renderer");
-   
+        
         Self {
             display,
             editor_renderer,

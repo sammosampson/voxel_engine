@@ -121,6 +121,7 @@ cycle_counter! {
     SetWorldNodeOrientation,
     BuildEditorRenderGraphForStatistics,
     BuildEditorRenderGraphForMeasurements,
+    BuildEditorRenderGraphForEditorState,
     BuildEditorRenderGraphForCamera,
     BuildEditorRenderGraphForLog,
     SetRenderLighting,

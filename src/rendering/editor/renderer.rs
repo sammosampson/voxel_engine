@@ -39,7 +39,7 @@ impl EditorRenderer {
         self.egui.ctx().set_visuals(visuals);
         
         for node in graph.controls() {
-            self.render_window(&graph.data(), &node, event_producer)
+            self.render_window(graph, &node, event_producer)
         }
 
         graph.clear_data();
@@ -57,16 +57,29 @@ impl EditorRenderer {
     
     fn render_window(
         &self,
-        data: &HashMap<graph::EditorRenderGraphDataItem, graph::EditorRenderGraphData>,
+        graph: &graph::EditorRenderGraph,
         node: &graph::EditorRenderGraphNode,
         event_producer: &mut events::SystemEventProducer) {
         match node {
-            graph::EditorRenderGraphNode::Window { name, children } => {
-                egui::Window::new(name)
+            graph::EditorRenderGraphNode::SideBar { name, children } => {
+                egui::SidePanel::left(name)
                     .resizable(false)
                     .show(self.egui.ctx(), |ui| {
                         for node in children {
-                            self.render_node(ui, data, node, event_producer);
+                            self.render_node(ui, &graph.data(), node, event_producer);
+                        }
+                    });
+            },
+            graph::EditorRenderGraphNode::Window { name, children } => {
+                let window = egui::Window::new(name)
+                    .resizable(false);
+                if !graph.is_window_visible(name) {
+                    return;
+                }
+                window
+                    .show(self.egui.ctx(), |ui| {
+                        for node in children {
+                            self.render_node(ui, &graph.data(), node, event_producer);
                         }
                     });
             },
@@ -126,7 +139,7 @@ impl EditorRenderer {
                     self.render_data(ui, data, cell, event_producer);
                 }
                 ui.end_row();
-            },
+            }
             _ => self.render_data(ui, data, node, event_producer)
         }
     }
@@ -138,6 +151,18 @@ impl EditorRenderer {
         node: &graph::EditorRenderGraphNode,
         event_producer: &mut events::SystemEventProducer) {
         match node {
+            graph::EditorRenderGraphNode::Toggle { item, click_handler } => {
+                if let Some(data_item) = data.get(item) {
+                    match data_item {
+                        graph::EditorRenderGraphData::Boolean { mut value } => {            
+                            if self.render_editable_bool(ui, &item.to_string(), &mut value) {
+                                event_producer.push(events::SystemEvent::EditorChange(click_handler(value)));
+                            }
+                        },
+                        _ => {}
+                    }
+                }
+            },
             graph::EditorRenderGraphNode::Label { item } => {
                 ui.label(item.to_string());
             },
@@ -186,9 +211,13 @@ impl EditorRenderer {
         }
     }
 
-    fn render_editable_float(&self, ui: &mut egui::Ui, name: &str, value: &mut f32) -> bool {
-        ui.label(name);
+    fn render_editable_float(&self, ui: &mut egui::Ui, label: &str, value: &mut f32) -> bool {
+        ui.label(label);
         ui.add(egui::DragValue::new(value)).changed()
+    }
+    
+    fn render_editable_bool(&self, ui: &mut egui::Ui, label: &str, value: &mut bool) -> bool {
+        ui.add(egui::Checkbox::new(value, label)).changed()
     }
 
     fn render_float(&self, ui: &mut egui::Ui, value: &mut f32) {
