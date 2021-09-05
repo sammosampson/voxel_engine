@@ -80,7 +80,8 @@ impl WorldRenderGraph {
 }
 
 pub struct WorldRenderGraphNode {
-    orientation: math::Matrix4x4,
+    position: math::Matrix4x4,
+    rotation: math::Matrix4x4,
     node_type: WorldRenderGraphNodeType,
 }
 
@@ -88,12 +89,17 @@ impl WorldRenderGraphNode {
     pub fn new(node_type: WorldRenderGraphNodeType) -> Self {
         Self {
             node_type,
-            orientation: math::Matrix4x4::identity(),
+            position: math::Matrix4x4::identity(),
+            rotation: math::Matrix4x4::identity(),
         }
     }
 
-    pub fn set_orientation(&mut self, to_set: math::Matrix4x4) {
-        self.orientation = to_set;
+    pub fn set_position(&mut self, to_set: math::Matrix4x4) {
+        self.position = to_set;
+    }
+
+    pub fn set_rotation(&mut self, to_set: math::Matrix4x4) {
+        self.rotation = to_set;
     }
     
     
@@ -107,7 +113,7 @@ impl WorldRenderGraphNode {
     ) {
         match &mut self.node_type {
             WorldRenderGraphNodeType::Mesh(mesh_node) => {
-                mesh_node.draw(display, target, self.orientation, perspective, view, light_direction);
+                mesh_node.draw(display, target, self.rotation * self.position, perspective, view, light_direction);
             },
         }
     }

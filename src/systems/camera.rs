@@ -9,7 +9,7 @@ use crate::debug;
 pub fn add_cameras_to_world(world: &mut legion::world::World) {
     world.push((
         cameras::Camera {  
-            position: math::Vector4::position(0.5, 0.2, -3.0), 
+            position: math::Vector4::position(0.5, 0.2, -50.0), 
             direction: math::Vector4::direction(-0.5, -0.2, 3.0), 
             up: math::Vector4::direction(0.0, 1.0, 0.0) 
         },

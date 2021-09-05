@@ -11,15 +11,11 @@ pub const BLOCKS_PER_CHUNK_X:usize = 16;
 pub const BLOCKS_PER_CHUNK_Y:usize = 16;
 pub const BLOCKS_PER_CHUNK_Z:usize = 16;
 
-
-pub fn wierd_shape() -> chunk::Chunk {
+pub fn full_chunk_shape() -> chunk::Chunk {
     let mut chunk = chunk::Chunk::default();
     let positions = block::ChunkBlockPositionIterator::default();
     
     for block_position in positions {
-        if (block_position.absolute_centre()).length().abs() >= 7.5 {
-            continue;
-        }
         if block_position.x % 2 == 0 {
             chunk::place_block(&mut chunk, block_position, block::BlockType::Brick)
         }
@@ -29,4 +25,3 @@ pub fn wierd_shape() -> chunk::Chunk {
     }
     chunk
 }
-  

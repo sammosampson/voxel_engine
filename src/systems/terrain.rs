@@ -8,31 +8,31 @@ use crate::terrain::*;
 
 pub fn add_terrain_to_world(world: &mut legion::world::World) {
     world.push((
-        wierd_shape(),
+        full_chunk_shape(),
         terrain::ChunkPosition::new(0, 0, 0),
         )
     );
 
     world.push((
-        wierd_shape(),
+        full_chunk_shape(),
         terrain::ChunkPosition::new(1, 0, 0),
         )
     );
 
     world.push((
-        wierd_shape(),
+        full_chunk_shape(),
         terrain::ChunkPosition::new(-1, 0, 0),
         )
     );
 
     world.push((
-        wierd_shape(),
+        full_chunk_shape(),
         terrain::ChunkPosition::new(0, 0, 1),
         )
     );
 
     world.push((
-        wierd_shape(),
+        full_chunk_shape(),
         terrain::ChunkPosition::new(0, 0, -1),
         )
     );
@@ -47,8 +47,8 @@ pub fn position_chunks(
     component_buffer: &mut CommandBuffer
 ) {
     let timed_block = debug::TimedBlock::start(debug::CycleCounter::PositionChunks);
-    let position = position::Position::from(chunk_position.absolute_centre());
-    component_buffer.add_component(*entity, position);
+    let world_position = position::Position::from(chunk_position.absolute_centre());
+    component_buffer.add_component(*entity, world_position);
     timed_block.stop();
 }
 

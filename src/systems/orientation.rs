@@ -27,9 +27,8 @@ fn calculate_rotation(current_rotation: f32, speed:f32, time: &time::ElapsedTime
 }
 
 #[system(for_each)]
-pub fn set_world_node_orientation(
+pub fn set_world_node_rotation(
     entity: &Entity,
-    position: &position::Position, 
     rotation: &rotation::Rotation, 
     #[resource] render_graph: &mut rendering::WorldRenderGraph
     ) {
@@ -38,11 +37,23 @@ pub fn set_world_node_orientation(
         render_graph
             .find(entity)
             .unwrap()
-            .set_orientation(                
-                math::Matrix4x4::x_rotation(rotation.x) 
-                * math::Matrix4x4::y_rotation(rotation.y)
-                * math::Matrix4x4::translation(position.value)
-        );
+            .set_rotation(math::Matrix4x4::x_rotation(rotation.x) * math::Matrix4x4::y_rotation(rotation.y));
+        
+        timed_block.stop();
+}
+
+#[system(for_each)]
+pub fn set_world_node_position(
+    entity: &Entity,
+    position: &position::Position, 
+    #[resource] render_graph: &mut rendering::WorldRenderGraph
+    ) {
+        let timed_block = debug::TimedBlock::start(debug::CycleCounter::SetWorldNodeOrientation);
+        
+        render_graph
+            .find(entity)
+            .unwrap()
+            .set_position(math::Matrix4x4::translation(position.value));
         
         timed_block.stop();
 }
