@@ -5,6 +5,23 @@ use crate::math;
 use crate::events;
 use crate::input;
 use crate::debug;
+use crate::position;
+use crate::physics;
+
+#[system(for_each)]
+#[filter(!component::<debug::EditorVisible>())]
+pub fn follow_with_attached_camera(
+    camera: &mut cameras::Camera,
+    attach_camera: &cameras::AttachCamera,
+    position: &position::Position,
+    heading: &physics::Heading
+) {
+    let timed_block = debug::TimedBlock::start(debug::CycleCounter::FollowWithAttachedCamera);
+    camera.position = position.value + attach_camera.offset_position;
+    camera.direction = heading.value + attach_camera.offset_direction;
+
+    timed_block.stop();
+}
 
 #[system(for_each)]
 pub fn set_camera_to_render_view_matrix(
@@ -48,12 +65,13 @@ pub fn move_camera_from_editor(
 }
 
 #[system(for_each)]
-pub fn move_camera_from_mouse_input(
+#[filter(component::<debug::EditorVisible>())]
+pub fn move_editor_camera_from_mouse_action(
     input: &input::MouseInput,
     camera: &mut cameras::Camera,
     window_size: &rendering::WindowSize
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::MoveCameraFromMouseInput);
+    let timed_block = debug::TimedBlock::start(debug::CycleCounter::MoveEditorCameraFromMouseInput);
 
     let mut last_action = &input.last_previous_action;
 

@@ -7,15 +7,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'voxel_engine_runner'",
+            "name": "Debug executable 'voxel_engine'",
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=voxel_engine_runner",
-                    "--package=voxel_engine_runner"
+                    "--bin=voxel_engine",
+                    "--package=voxel_engine"
                 ],
                 "filter": {
-                    "name": "voxel_engine_runner",
+                    "name": "voxel_engine",
                     "kind": "bin"
                 }
             },
@@ -25,16 +25,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'voxel_engine_runner'",
+            "name": "Debug unit tests in executable 'voxel_engine'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--bin=voxel_engine_runner",
-                    "--package=voxel_engine_runner"
+                    "--bin=voxel_engine",
+                    "--package=voxel_engine"
                 ],
                 "filter": {
-                    "name": "voxel_engine_runner",
+                    "name": "voxel_engine",
                     "kind": "bin"
                 }
             },

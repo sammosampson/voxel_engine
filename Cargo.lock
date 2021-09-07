@@ -1737,23 +1737,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f497285884f3fcff424ffc933e56d7cbca511def0c9831a7f9b5f6153e3cc89b"
 
 [[package]]
-name = "rust-test"
-version = "0.1.0"
-dependencies = [
- "egui",
- "egui_glium",
- "glium",
- "image",
- "itertools 0.10.1",
- "legion",
- "log",
- "paste",
- "pretty_env_logger",
- "shrev",
- "winit 0.21.0",
-]
-
-[[package]]
 name = "rustc-demangle"
 version = "0.1.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2052,6 +2035,23 @@ name = "void"
 version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6a02e4885ed3bc0f2de90ea6dd45ebcbb66dacffe03547fadbb0eeae2770887d"
+
+[[package]]
+name = "voxel_engine"
+version = "0.1.0"
+dependencies = [
+ "egui",
+ "egui_glium",
+ "glium",
+ "image",
+ "itertools 0.10.1",
+ "legion",
+ "log",
+ "paste",
+ "pretty_env_logger",
+ "shrev",
+ "winit 0.21.0",
+]
 
 [[package]]
 name = "walkdir"

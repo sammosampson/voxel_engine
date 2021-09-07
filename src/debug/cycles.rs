@@ -131,9 +131,12 @@ cycle_counter! {
     RenderEditor,
     RenderWorld,
     RenderEnd,
+    FollowWithAttachedCamera,
     SetCameraToRenderViewMatrix,
     MoveCameraFromEditor,
-    MoveCameraFromMouseInput,
+    MoveEditorCameraFromMouseInput,
+    MoveHeroFromMouseInput,
+    ApplyHeadingAndVelocityToPosition,
     AggregateStatistics,
     AggregateWorldEvents
 }

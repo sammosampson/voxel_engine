@@ -55,6 +55,11 @@ pub struct MouseAction {
 }
 
 impl MouseAction {
+    pub fn left_button_pressed(&self) -> bool {
+        self.button == MouseButton::Left 
+            && self.state == InputState::Pressed
+    }
+    
     pub fn middle_button_pressed(&self) -> bool {
         self.button == MouseButton::Middle 
             && self.state == InputState::Pressed

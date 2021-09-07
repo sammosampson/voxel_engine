@@ -1,3 +1,7 @@
 #[derive(Default)]
-pub struct Hero {
+pub struct HeroSpawner {
+}
+
+#[derive(Default)]
+pub struct HeroSpawned {
 }

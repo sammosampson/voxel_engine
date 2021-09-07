@@ -27,6 +27,7 @@ fn calculate_rotation(current_rotation: f32, speed:f32, time: &time::ElapsedTime
 }
 
 #[system(for_each)]
+#[filter(component::<rendering::RenderGraphSet>())]
 pub fn set_world_node_rotation(
     entity: &Entity,
     rotation: &rotation::Rotation, 
@@ -43,6 +44,7 @@ pub fn set_world_node_rotation(
 }
 
 #[system(for_each)]
+#[filter(component::<rendering::RenderGraphSet>())]
 pub fn set_world_node_position(
     entity: &Entity,
     position: &position::Position, 

@@ -14,13 +14,20 @@ pub struct Debug {
 
 
 #[derive(Default, Clone, Debug)]
-pub struct Editor {
-    pub editor_visible: bool,
+pub struct EditorState {
     pub windows_visible: HashMap<String, bool>
 }
 
-impl Editor {
-    pub fn set_windows_visibility(&mut self, visible: bool, window_name: String) {
+#[derive(Default)]
+pub struct EditorVisibility {
+}
+
+#[derive(Default)]
+pub struct EditorVisible {
+}
+
+impl EditorState {
+    pub fn set_window_visibility(&mut self, visible: bool, window_name: String) {
         self.windows_visible.insert(window_name, visible);
 
     }

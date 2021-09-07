@@ -7,7 +7,8 @@ use crate::debug;
 pub struct EditorRenderGraph {
     controls: Vec<EditorRenderGraphNode>, 
     data: HashMap<EditorRenderGraphDataItem, EditorRenderGraphData>,
-    state: debug::Editor
+    state: debug::EditorState,
+    editor_visible: bool
 }
 
 impl EditorRenderGraph {
@@ -15,16 +16,18 @@ impl EditorRenderGraph {
         Self {
             controls: vec!(),
             data: HashMap::default(),
-            state: debug::Editor::default()
+            state: debug::EditorState::default(),
+            editor_visible: false
         }
     }
 
     pub fn editor_visible(&self) -> bool {
-        self.state.editor_visible
+        self.editor_visible
     }
 
-    pub fn set_state(&mut self, state: &debug::Editor) {
+    pub fn set_state(&mut self, state: &debug::EditorState, visible: bool) {
         self.state = state.clone();
+        self.editor_visible = visible;
     }
     
     pub fn add_control(&mut self, control: EditorRenderGraphNode) {

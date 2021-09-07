@@ -14,6 +14,7 @@ mod lighting;
 mod position;
 mod rotation;
 mod hero;
+mod physics;
 
 fn main() {
     application::Application::build().run();

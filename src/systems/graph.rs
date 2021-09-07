@@ -24,17 +24,18 @@ pub fn build_world_graph_for_mesh(
 
 #[system(for_each)]
 pub fn set_editor_state_on_graph(
-    editor: &mut debug::Editor,
+    editor: &mut debug::EditorState,
+    editor_visible: Option<&debug::EditorVisible>,
     #[resource] graph: &mut rendering::EditorRenderGraph
 ) {
     let timed_block = debug::TimedBlock::start(debug::CycleCounter::SetEditorStateOnRenderer);
-    graph.set_state(editor);    
+    graph.set_state(editor, editor_visible.is_some());    
     timed_block.stop();
 }
 
 #[system(for_each)]
 #[filter(component::<debug::Debug>())]
-#[filter(!component::<debug::Editor>())]
+#[filter(!component::<debug::EditorState>())]
 pub fn set_editor_controls (
     entity: &legion::Entity,
     buffer: &mut legion::systems::CommandBuffer,
@@ -47,7 +48,8 @@ pub fn set_editor_controls (
     graph.add_control(graph::create_camera_window());
     graph.add_control(graph::create_measurements_window());
     
-    buffer.add_component(*entity, debug::Editor::default());
+    buffer.add_component(*entity, debug::EditorState::default());
+    buffer.add_component(*entity, debug::EditorVisibility::default());
     timed_block.stop();
 }
 
@@ -57,22 +59,18 @@ pub fn build_editor_render_graph_for_statistics(
     #[resource] graph: &mut rendering::EditorRenderGraph
 ) {
     let timed_block = debug::TimedBlock::start(debug::CycleCounter::BuildEditorRenderGraphForStatistics);
-
-    graph.add_float_data(rendering::EditorRenderGraphDataItem::ElapsedTime, time.seconds * 1000.0);
-    
+    graph.add_float_data(rendering::EditorRenderGraphDataItem::ElapsedTime, time.seconds * 1000.0);    
     timed_block.stop();
 }
 
 #[system(for_each)]
 pub fn build_editor_render_graph_for_editor_state(
-    editor: &debug::Editor, 
+    editor: &debug::EditorState, 
     #[resource] graph: &mut rendering::EditorRenderGraph
 ) {
     let timed_block = debug::TimedBlock::start(debug::CycleCounter::BuildEditorRenderGraphForEditorState);
-
     graph.add_boolean_data(rendering::EditorRenderGraphDataItem::CameraWindowVisibiity, editor.is_window_visible(graph::CAMERA_WINDOW_NAME));
-    graph.add_boolean_data(rendering::EditorRenderGraphDataItem::MeasurementWindowVisibiity, editor.is_window_visible(graph::MEASUREMENTS_WINDOW_NAME));
-    
+    graph.add_boolean_data(rendering::EditorRenderGraphDataItem::MeasurementWindowVisibiity, editor.is_window_visible(graph::MEASUREMENTS_WINDOW_NAME));    
     timed_block.stop();
 }
 
@@ -99,10 +97,8 @@ pub fn build_editor_render_graph_for_camera(
     #[resource] graph: &mut rendering::EditorRenderGraph
 ) {
     let timed_block = debug::TimedBlock::start(debug::CycleCounter::BuildEditorRenderGraphForCamera);
-
     graph.add_vector4_data(rendering::EditorRenderGraphDataItem::CameraPosition, camera.position);
     graph.add_vector4_data(rendering::EditorRenderGraphDataItem::CameraDirection, camera.direction);
-    graph.add_vector4_data(rendering::EditorRenderGraphDataItem::CameraUp, camera.up);
-    
+    graph.add_vector4_data(rendering::EditorRenderGraphDataItem::CameraUp, camera.up);  
     timed_block.stop();
 }
