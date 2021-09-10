@@ -1,41 +1,46 @@
 use crate::terrain;
-use super::chunk;
 use crate::math;
 
 #[derive(Debug, Clone, Copy)]
 pub enum BlockType {
-    Air,
+    Sea,
+    Sand,
     Grass,
-    Brick
+    Rock,
+    Ice,
+    Air,
 }
 
 #[derive(Debug, Default, Copy, Clone, Eq, PartialEq)]
-pub struct ChunkBlockPosition {
+pub struct BlockPosition {
     pub x: usize,
     pub y: usize,
     pub z: usize
 }
 
-impl ChunkBlockPosition {
-    fn centre() -> Self {
-        Self {
-            x: terrain::BLOCKS_PER_CHUNK_X / 2,
-            y: terrain::BLOCKS_PER_CHUNK_Y / 2,
-            z: terrain::BLOCKS_PER_CHUNK_Z / 2,
-        }
-    }
-
+impl BlockPosition {
     pub fn new(x: usize, y: usize, z: usize) -> Self {
         Self {
             x, y, z
         }
     }
-    
-    pub fn block_index(&self) -> usize {
-        (self.z * terrain::BLOCKS_PER_CHUNK_Y) + (self.y * terrain::BLOCKS_PER_CHUNK_X) + self.x
+    pub fn increase_height(&self) -> Self {
+        Self {
+            x: self.x, 
+            y: self.y + 1,
+            z: self.z
+        }
+    }
+
+    fn centre() -> Self {
+        Self {
+            x: terrain::COLUMNS_PER_CHUNK_X / 2,
+            y: 0,
+            z: terrain::COLUMNS_PER_CHUNK_Z / 2,
+        }
     }
     
-    pub fn absolute_centre(&self) -> math::Vector4 {
+    pub fn world_centre(&self) -> math::Vector4 {
         let relative_centre = math::Vector4::position(terrain::BLOCK_SIZE, terrain::BLOCK_SIZE, terrain::BLOCK_SIZE) / 2.0;
         let centre: math::Vector4 = Self::centre().into();
         let current: math::Vector4 = self.clone().into();
@@ -43,62 +48,43 @@ impl ChunkBlockPosition {
     }
 }
 
-
-#[test]
-fn position_has_correct_abs_centres() {
-    assert_eq!(ChunkBlockPosition::default().absolute_centre(), math::Vector4::position(-7.5, -7.5, -7.5));
-    assert_eq!(ChunkBlockPosition::new(terrain::BLOCKS_PER_CHUNK_X - 1, 0, 0).absolute_centre(), math::Vector4::position(7.5, -7.5, -7.5));
-}
-
-impl Into<math::Vector4> for ChunkBlockPosition {
-    fn into(self) -> math::Vector4 {
-        math::Vector4::position(self.x as f32, self.y as f32, self.z as f32)
+impl From<BlockPosition> for math::Vector4 {
+    fn from(position: BlockPosition) -> Self {
+        Self::position(position.x as f32, position.y as f32, position.z as f32)
     }
 }
 
-#[derive(Default)]
-pub struct ChunkBlockPositionIterator {
-    current: ChunkBlockPosition,
-}
-
-impl Iterator for ChunkBlockPositionIterator {
-    type Item = ChunkBlockPosition;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        let current = self.current;
-        if self.current.x == terrain::BLOCKS_PER_CHUNK_X - 1 {
-            if self.current.y == terrain::BLOCKS_PER_CHUNK_Y - 1 {
-                if self.current.z == terrain::BLOCKS_PER_CHUNK_Z - 1 {
-                    return None
-                } else {
-                    self.current = ChunkBlockPosition::new(0, 0, self.current.z + 1);
-                }
-            }  else {
-                self.current = ChunkBlockPosition::new(0, self.current.y + 1, self.current.z);
-            }
-        } else {
-            self.current = ChunkBlockPosition::new(self.current.x + 1, self.current.y, self.current.z);
+impl From<BlockPosition> for BlockType {
+    fn from(position: BlockPosition) -> Self {
+        match position.y {
+            0..=5 => BlockType::Sea,
+            6..=10 => BlockType::Sand,
+            11..=500 => BlockType::Grass,
+            501..=900 => BlockType::Rock,
+            901..=1000 => BlockType::Ice,
+            _ => BlockType::Air,
         }
-
-        Some(current)
     }
 }
 
-#[derive(Clone, Copy)]
 pub struct Block {
-    pub block_type: BlockType,
-    position: ChunkBlockPosition
+    position: BlockPosition
 }
 
 impl Block {
-    pub fn new(chunk: &chunk::Chunk, position: ChunkBlockPosition) -> Self {
-        Self {
-            block_type: chunk::get_block(chunk, position),
-            position
-        }
+    pub fn world_centre(&self) -> math::Vector4 {
+        self.position.world_centre()
     }
 
-    pub fn absolute_position(&self) -> math::Vector4 {
-        self.position.absolute_centre()
+    pub fn block_type(&self) -> BlockType {
+        self.position.into()
+    }
+}
+
+impl From<BlockPosition> for Block {
+    fn from(position: BlockPosition) -> Self {
+        Self {
+            position
+        }
     }
 }

@@ -9,31 +9,31 @@ use crate::terrain::*;
 pub fn add_terrain_to_world(world: &mut legion::world::World) {
     world.push((
         full_chunk_shape(),
-        terrain::ChunkPosition::new(0, 0, 0),
+        terrain::ChunkPosition::new(0, 0),
         )
     );
 
     world.push((
         full_chunk_shape(),
-        terrain::ChunkPosition::new(1, 0, 0),
+        terrain::ChunkPosition::new(1, 0),
         )
     );
 
     world.push((
         full_chunk_shape(),
-        terrain::ChunkPosition::new(-1, 0, 0),
+        terrain::ChunkPosition::new(-1, 0),
         )
     );
 
     world.push((
         full_chunk_shape(),
-        terrain::ChunkPosition::new(0, 0, 1),
+        terrain::ChunkPosition::new(0, 1),
         )
     );
 
     world.push((
         full_chunk_shape(),
-        terrain::ChunkPosition::new(0, 0, -1),
+        terrain::ChunkPosition::new(0, -1),
         )
     );
 }
@@ -95,20 +95,6 @@ pub fn tesselate_chunk_top_faces(
 }
 
 #[system(for_each)]
-#[filter(!component::<terrain::ChunkBottomMesh>())]
-pub fn tesselate_chunk_bottom_faces(
-    entity: &Entity, 
-    chunk: &terrain::Chunk, 
-    component_buffer: &mut CommandBuffer
-) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::TesselateChunkFrontMesh);
-    let mut mesh = terrain::ChunkBottomMesh::default();
-    mesh.tesselate(chunk);
-    component_buffer.add_component(*entity, mesh);
-    timed_block.stop();
-}
-
-#[system(for_each)]
 #[filter(!component::<terrain::ChunkLeftMesh>())]
 pub fn tesselate_chunk_left_faces(
     entity: &Entity, 
@@ -143,7 +129,6 @@ pub fn merge_chunk_mesh(
     front: &terrain::ChunkFrontMesh, 
     back: &terrain::ChunkBackMesh, 
     top: &terrain::ChunkTopMesh, 
-    bottom: &terrain::ChunkBottomMesh, 
     left: &terrain::ChunkLeftMesh, 
     right: &terrain::ChunkRightMesh,
     #[resource] graph: &mut rendering::WorldRenderGraph,
@@ -154,7 +139,6 @@ pub fn merge_chunk_mesh(
     vertices.append(&mut front.clone().vertices);
     vertices.append(&mut back.clone().vertices);
     vertices.append(&mut top.clone().vertices);
-    vertices.append(&mut bottom.clone().vertices);
     vertices.append(&mut left.clone().vertices);
     vertices.append(&mut right.clone().vertices);
     graph.add_mesh(*entity, vertices);

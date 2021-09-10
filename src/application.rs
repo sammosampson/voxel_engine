@@ -110,7 +110,6 @@ fn build_schedule() -> Schedule {
         .add_system(systems::tesselate_chunk_front_faces_system())
         .add_system(systems::tesselate_chunk_back_faces_system())
         .add_system(systems::tesselate_chunk_top_faces_system())
-        .add_system(systems::tesselate_chunk_bottom_faces_system())
         .add_system(systems::tesselate_chunk_left_faces_system())
         .add_system(systems::tesselate_chunk_right_faces_system())
         .flush()

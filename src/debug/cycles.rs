@@ -114,7 +114,6 @@ cycle_counter! {
     TesselateChunkFrontMesh,
     TesselateChunkBackMesh,
     TesselateChunkTopMesh,
-    TesselateChunkBottomMesh,
     TesselateChunkLeftMesh,
     TesselateChunkRightMesh,
     MergeChunkMesh,

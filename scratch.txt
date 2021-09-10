@@ -1,0 +1,24 @@
+chunk:
+pub fn absolute_centre(&self) -> math::Vector4 {
+        math::Vector4::position(
+            self.x as f32 * (super::BLOCKS_PER_CHUNK_X as f32 * super::BLOCK_SIZE),
+            self.y as f32 * (super::BLOCKS_PER_CHUNK_Y as f32 * super::BLOCK_SIZE),
+            self.z as f32 * (super::BLOCKS_PER_CHUNK_Z as f32 * super::BLOCK_SIZE),
+        )
+    }
+
+block position:
+fn centre() -> Self {
+    Self {
+        x: terrain::BLOCKS_PER_CHUNK_X / 2,
+        y: terrain::BLOCKS_PER_CHUNK_Y / 2,
+        z: terrain::BLOCKS_PER_CHUNK_Z / 2,
+    }
+}
+
+pub fn absolute_centre(&self) -> math::Vector4 {
+    let relative_centre = math::Vector4::position(terrain::BLOCK_SIZE, terrain::BLOCK_SIZE, terrain::BLOCK_SIZE) / 2.0;
+    let centre: math::Vector4 = Self::centre().into();
+    let current: math::Vector4 = self.clone().into();
+    (current - centre) + relative_centre
+}
