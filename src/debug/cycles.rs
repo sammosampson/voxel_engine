@@ -121,6 +121,7 @@ cycle_counter! {
     BuildWorldGraphForMesh,
     BuildEditorRenderGraphForStatistics,
     BuildEditorRenderGraphForMeasurements,
+    BuildEditorRenderGraphForWorldEntities,
     BuildEditorRenderGraphForEditorState,
     BuildEditorRenderGraphForCamera,
     BuildEditorRenderGraphForLog,
@@ -137,7 +138,8 @@ cycle_counter! {
     MoveHeroFromMouseInput,
     ApplyHeadingAndVelocityToPosition,
     AggregateStatistics,
-    AggregateWorldEvents
+    AggregateWorldEvents,
+    WorldEntitySelectionFromInput
 }
 
 measurement_channel_readers_lookup! {

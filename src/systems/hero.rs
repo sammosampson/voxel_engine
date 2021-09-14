@@ -1,4 +1,5 @@
 use legion::*;
+use crate::world;
 use crate::hero;
 use crate::position;
 use crate::rotation;
@@ -28,6 +29,7 @@ pub fn spawn_hero(
 ) {
     command_buffer.add_component(*entity, hero::HeroSpawned::default());
 
+    let world_id = world::WorldEntityId::from("hero");
     let rotation = rotation::Rotation::default();
     let velocity = physics::Velocity::default();
     let heading = physics::Heading::from(math::Vector4::direction(0.0, 0.0, 1.0));
@@ -51,17 +53,19 @@ pub fn spawn_hero(
         size: math::Size2d::new(800.0, 600.0)
     };
 
+    
     let spawned = command_buffer.push((
+        world_id,
         *position,
         rotation, 
         velocity,
         heading,
         time,
         mesh,
-        input,
-        editor_visibility,  
+        input, 
     ));
 
+    command_buffer.add_component(spawned, editor_visibility);
     command_buffer.add_component(spawned, attach_camera);
     command_buffer.add_component(spawned, camera);
     command_buffer.add_component(spawned, window_size);

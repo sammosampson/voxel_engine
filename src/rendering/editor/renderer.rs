@@ -39,7 +39,7 @@ impl EditorRenderer {
         self.egui.ctx().set_visuals(visuals);
         
         for node in graph.controls() {
-            self.render_window(graph, &node, event_producer)
+            self.render_topmost(graph, &node, event_producer)
         }
 
         graph.clear_data();
@@ -55,7 +55,7 @@ impl EditorRenderer {
         return SubRendererResult::None;
     }
     
-    fn render_window(
+    fn render_topmost(
         &self,
         graph: &graph::EditorRenderGraph,
         node: &graph::EditorRenderGraphNode,
@@ -123,7 +123,7 @@ impl EditorRenderer {
                 let data_item = data.get(item).unwrap();
                 
                 match data_item {
-                    graph::EditorRenderGraphData::Rows { data } => {
+                    graph::EditorRenderGraphData::Cells { data } => {
                         for data_item in data {
                             for cell in children {
                                 self.render_data(ui, data_item, cell, event_producer);
@@ -134,6 +134,28 @@ impl EditorRenderer {
                     _ => {}
                 }
             },
+            graph::EditorRenderGraphNode::Tree { item, item_click_handler } => {
+                let data_item = data.get(item).unwrap();
+                match data_item {
+                    graph::EditorRenderGraphData::Nodes { data } => {
+                        let mut sorted = data.clone();
+                        sorted.sort();
+                        for list_item in sorted {
+                            let response = egui::CollapsingHeader
+                                ::new(list_item.0.clone())
+                                .default_open(false)
+                                .selectable(true)
+                                .selected(list_item.1)
+                                .show(ui, |_ui| {});
+                            if response.header_response.clicked() {
+                                event_producer.push(events::SystemEvent::EditorChange(item_click_handler(list_item.0.clone())));
+                            }
+                        }                                  
+                    },
+                    _ => {}
+                }
+            },
+            
             graph::EditorRenderGraphNode::Row { children} => {
                 for cell in children {
                     self.render_data(ui, data, cell, event_producer);

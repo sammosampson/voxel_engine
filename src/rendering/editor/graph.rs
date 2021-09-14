@@ -38,6 +38,19 @@ impl EditorRenderGraph {
         self.data.insert(item, value);
     }
 
+    pub fn add_list_item(&mut self, list: EditorRenderGraphDataItem, value: String, selected: bool) {
+        if !self.data.contains_key(&list) {
+            self.data.insert(list, EditorRenderGraphData::Nodes { data: vec!() });
+        }
+        let nodes = self.data.get_mut(&list).unwrap();
+        match nodes {
+            EditorRenderGraphData::Nodes { data } => {
+                data.push((value, selected));
+            },
+            _ => {}
+        }
+    }
+
     pub fn add_float_data(&mut self, item: EditorRenderGraphDataItem, value: f32) {
         self.add_data(item, EditorRenderGraphData::Float { value })
     }
@@ -52,12 +65,12 @@ impl EditorRenderGraph {
 
     pub fn add_row_data(&mut self, item: EditorRenderGraphDataItem, children: HashMap<EditorRenderGraphDataItem, EditorRenderGraphData> ) {
         if !self.data.contains_key(&item) {
-            self.data.insert(item, EditorRenderGraphData::Rows { data: vec!() });
+            self.data.insert(item, EditorRenderGraphData::Cells { data: vec!() });
         }
         
         let data_item = self.data.get_mut(&item).unwrap();
         match data_item {
-            EditorRenderGraphData::Rows { data } => {
+            EditorRenderGraphData::Cells { data } => {
                 data.push(children);
             },
             _ => {}
@@ -86,8 +99,9 @@ pub enum EditorRenderGraphNode {
     Window { name: String, children: Vec<EditorRenderGraphNode> },
     ScrollArea { id: String, children: Vec<EditorRenderGraphNode> },
     Grid { name: String, children: Vec<EditorRenderGraphNode> },
-    Row { children: Vec<EditorRenderGraphNode> },
     Rows { children: Vec<EditorRenderGraphNode>, titles: Vec<EditorRenderGraphDataItem>, item: EditorRenderGraphDataItem },
+    Row { children: Vec<EditorRenderGraphNode> },
+    Tree { item: EditorRenderGraphDataItem, item_click_handler: Box<dyn Fn(String) -> events::EditorEvent>  },
     Toggle { item: EditorRenderGraphDataItem, click_handler: Box<dyn Fn(bool) -> events::EditorEvent> },
     Label { item: EditorRenderGraphDataItem },
     Text { item: EditorRenderGraphDataItem },
@@ -96,7 +110,8 @@ pub enum EditorRenderGraphNode {
 }
 
 pub enum EditorRenderGraphData {
-    Rows { data: Vec<HashMap<EditorRenderGraphDataItem, EditorRenderGraphData>> },
+    Cells { data: Vec<HashMap<EditorRenderGraphDataItem, EditorRenderGraphData>> },
+    Nodes { data: Vec<(String, bool)> },
     String { value: String },
     Boolean { value: bool },
     Float { value: f32 },
@@ -117,8 +132,10 @@ pub enum EditorRenderGraphDataItem {
     CameraPosition,
     CameraDirection,
     CameraUp,
-    GeometryPosition,
-    GeometryVertexCount,
+    EntityWindowVisibiity,
+    EntityNode,
+    EntityPosition,
+    EntityVertexCount,
 }
 
 impl Display for EditorRenderGraphDataItem {
@@ -126,6 +143,7 @@ impl Display for EditorRenderGraphDataItem {
         match self {
             EditorRenderGraphDataItem::MeasurementWindowVisibiity => f.write_str("Measurements"),
             EditorRenderGraphDataItem::CameraWindowVisibiity => f.write_str("Camera"),
+            EditorRenderGraphDataItem::EntityWindowVisibiity => f.write_str("Entities"),
             EditorRenderGraphDataItem::CycleMeasurement => f.write_str("Cycles"),
             EditorRenderGraphDataItem::CyclePercentage => f.write_str("Cycles %"),
             EditorRenderGraphDataItem::HitMeasurement => f.write_str("Hits"),
@@ -133,8 +151,8 @@ impl Display for EditorRenderGraphDataItem {
             EditorRenderGraphDataItem::CameraPosition => f.write_str("Position"),
             EditorRenderGraphDataItem::CameraDirection => f.write_str("Direction"),
             EditorRenderGraphDataItem::CameraUp => f.write_str("Up"),
-            EditorRenderGraphDataItem::GeometryPosition => f.write_str("Position"),
-            EditorRenderGraphDataItem::GeometryVertexCount => f.write_str("Verts"),
+            EditorRenderGraphDataItem::EntityPosition => f.write_str("Position"),
+            EditorRenderGraphDataItem::EntityVertexCount => f.write_str("Verts"),
             _ => f.write_str("")
         }
     }

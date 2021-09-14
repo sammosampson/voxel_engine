@@ -1,6 +1,7 @@
 use legion::*;
 use legion::systems::CommandBuffer;
 use crate::debug;
+use crate::world;
 use crate::rendering;
 use crate::position;
 use crate::terrain;
@@ -8,30 +9,35 @@ use crate::terrain::*;
 
 pub fn add_terrain_to_world(world: &mut legion::world::World) {
     world.push((
+        world::WorldEntityId::from("chunk+0+0"),
         full_chunk_shape(),
         terrain::ChunkPosition::new(0, 0),
         )
     );
 
     world.push((
+        world::WorldEntityId::from("chunk+1+0"),
         full_chunk_shape(),
         terrain::ChunkPosition::new(1, 0),
         )
     );
 
     world.push((
+        world::WorldEntityId::from("chunk-1+0"),
         full_chunk_shape(),
         terrain::ChunkPosition::new(-1, 0),
         )
     );
 
     world.push((
+        world::WorldEntityId::from("chunk+0+1"),
         full_chunk_shape(),
         terrain::ChunkPosition::new(0, 1),
         )
     );
 
     world.push((
+        world::WorldEntityId::from("chunk+1-1"),
         full_chunk_shape(),
         terrain::ChunkPosition::new(0, -1),
         )

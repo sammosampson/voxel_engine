@@ -18,17 +18,19 @@ pub enum EventChannelRegistrationType {
     Input,
     CameraMovementFromEditor,
     EditorVisibility,
-    EditorState
+    EditorState,
+    WorldEntitySelectionFromInput
 }
 
 pub struct EventChannelRegistrar {
-    registrations: [shrev::ReaderId<events::SystemEvent>; 5]
+    registrations: [shrev::ReaderId<events::SystemEvent>; 6]
 }
 
 impl EventChannelRegistrar {
     pub fn new(channel: &mut shrev::EventChannel<events::SystemEvent>) -> Self {
         Self {
             registrations: [
+                channel.register_reader(),
                 channel.register_reader(),
                 channel.register_reader(),
                 channel.register_reader(),
@@ -45,6 +47,7 @@ impl EventChannelRegistrar {
             EventChannelRegistrationType::CameraMovementFromEditor => &mut self.registrations[2],
             EventChannelRegistrationType::EditorVisibility => &mut self.registrations[3],
             EventChannelRegistrationType::EditorState => &mut self.registrations[4],
+            EventChannelRegistrationType::WorldEntitySelectionFromInput => &mut self.registrations[5],
         }
     }
 }

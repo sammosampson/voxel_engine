@@ -2,6 +2,7 @@
 use std::collections::HashMap;
 use legion::*;
 use crate::cameras;
+use crate::world;
 use crate::rendering;
 use crate::time;
 use crate::debug;
@@ -47,6 +48,7 @@ pub fn set_editor_controls (
     graph.add_control(graph::create_main_sidebar());
     graph.add_control(graph::create_camera_window());
     graph.add_control(graph::create_measurements_window());
+    graph.add_control(graph::create_entities_window());
     
     buffer.add_component(*entity, debug::EditorState::default());
     buffer.add_component(*entity, debug::EditorVisibility::default());
@@ -71,6 +73,7 @@ pub fn build_editor_render_graph_for_editor_state(
     let timed_block = debug::TimedBlock::start(debug::CycleCounter::BuildEditorRenderGraphForEditorState);
     graph.add_boolean_data(rendering::EditorRenderGraphDataItem::CameraWindowVisibiity, editor.is_window_visible(graph::CAMERA_WINDOW_NAME));
     graph.add_boolean_data(rendering::EditorRenderGraphDataItem::MeasurementWindowVisibiity, editor.is_window_visible(graph::MEASUREMENTS_WINDOW_NAME));    
+    graph.add_boolean_data(rendering::EditorRenderGraphDataItem::EntityWindowVisibiity, editor.is_window_visible(graph::MEASUREMENTS_WINDOW_NAME));    
     timed_block.stop();
 }
 
@@ -87,6 +90,23 @@ pub fn build_editor_render_graph_for_measurements(
     row.insert(rendering::EditorRenderGraphDataItem::CyclePercentage, rendering::EditorRenderGraphData::Float { value: (measurement.cycles as f32 / measurement.total_cycles as f32) * 100.0 });
     row.insert(rendering::EditorRenderGraphDataItem::HitMeasurement, rendering::EditorRenderGraphData::Int { value: measurement.hits });
     graph.add_row_data(rendering::EditorRenderGraphDataItem::MeasurementRow, row);
+    
+    timed_block.stop();
+}
+
+#[system(for_each)]
+pub fn build_editor_render_graph_for_world_entities(
+    world_entity_id: &world::WorldEntityId, 
+    world_entity_selected: Option<&world::WorldEntitySelected>,
+    #[resource] graph: &mut rendering::EditorRenderGraph
+) {
+    let timed_block = debug::TimedBlock::start(debug::CycleCounter::BuildEditorRenderGraphForWorldEntities);
+
+    graph.add_list_item(
+        rendering::EditorRenderGraphDataItem::EntityNode,
+        world_entity_id.name.clone(),
+        world_entity_selected.is_some()
+    );
     
     timed_block.stop();
 }
