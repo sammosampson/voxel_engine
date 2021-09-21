@@ -1,5 +1,6 @@
 use legion::*;
 use crate::world;
+use crate::rendering;
 use crate::events;
 use crate::debug;
 
@@ -45,4 +46,27 @@ fn toggle_world_entity_selection(
             command_buffer.remove_component::<world::WorldEntitySelected>(*entity);
         }
     }
+}
+
+#[system]
+#[read_component(world::WorldEntitySelected)]
+#[write_component(world::Visible)]
+pub fn world_entity_selection_hides_all_other_entities(world: &mut legion::world::SubWorld) {
+    if <&world::WorldEntitySelected>::query().iter(world).count() == 0 {
+        return;
+    }
+
+    <(&mut world::Visible, Option<&world::WorldEntitySelected>)>::query()
+        .iter_mut(world)
+        .for_each(|(visible, selected)| *visible = world::Visible(selected.is_some()));
+}
+
+
+#[system(for_each)]
+pub fn set_world_visibility(
+    entity: &Entity,
+    visible: &world::Visible, 
+    #[resource] graph: &mut rendering::WorldRenderGraph
+) {
+    graph.find(entity).unwrap().set_visibility(visible.0);
 }

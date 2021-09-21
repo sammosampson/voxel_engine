@@ -6,6 +6,8 @@ pub struct WorldEntityId {
 pub struct WorldEntitySelected {
 }
 
+pub struct Visible(pub bool);
+
 impl From<&str> for WorldEntityId {
     fn from(name: &str) -> Self {
         Self {

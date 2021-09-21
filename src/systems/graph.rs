@@ -73,7 +73,7 @@ pub fn build_editor_render_graph_for_editor_state(
     let timed_block = debug::TimedBlock::start(debug::CycleCounter::BuildEditorRenderGraphForEditorState);
     graph.add_boolean_data(rendering::EditorRenderGraphDataItem::CameraWindowVisibiity, editor.is_window_visible(graph::CAMERA_WINDOW_NAME));
     graph.add_boolean_data(rendering::EditorRenderGraphDataItem::MeasurementWindowVisibiity, editor.is_window_visible(graph::MEASUREMENTS_WINDOW_NAME));    
-    graph.add_boolean_data(rendering::EditorRenderGraphDataItem::EntityWindowVisibiity, editor.is_window_visible(graph::MEASUREMENTS_WINDOW_NAME));    
+    graph.add_boolean_data(rendering::EditorRenderGraphDataItem::EntityWindowVisibiity, editor.is_window_visible(graph::ENTITIES_WINDOW_NAME));    
     timed_block.stop();
 }
 

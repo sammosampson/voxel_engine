@@ -83,6 +83,7 @@ pub struct WorldRenderGraphNode {
     position: math::Matrix4x4,
     rotation: math::Matrix4x4,
     node_type: WorldRenderGraphNodeType,
+    visible: bool
 }
 
 impl WorldRenderGraphNode {
@@ -91,6 +92,7 @@ impl WorldRenderGraphNode {
             node_type,
             position: math::Matrix4x4::identity(),
             rotation: math::Matrix4x4::identity(),
+            visible: true
         }
     }
 
@@ -101,7 +103,10 @@ impl WorldRenderGraphNode {
     pub fn set_rotation(&mut self, to_set: math::Matrix4x4) {
         self.rotation = to_set;
     }
-    
+
+    pub fn set_visibility(&mut self, to_set: bool) {
+        self.visible = to_set;
+    }
     
     pub fn draw(
         &mut self,
@@ -111,6 +116,10 @@ impl WorldRenderGraphNode {
         view: math::Matrix4x4,
         light_direction: math::Vector4
     ) {
+        if !self.visible {
+            return;
+        }
+
         match &mut self.node_type {
             WorldRenderGraphNodeType::Mesh(mesh_node) => {
                 mesh_node.draw(display, target, self.rotation * self.position, perspective, view, light_direction);

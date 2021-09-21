@@ -53,6 +53,8 @@ pub fn spawn_hero(
         size: math::Size2d::new(800.0, 600.0)
     };
 
+    let visible = world::Visible(true);
+
     
     let spawned = command_buffer.push((
         world_id,
@@ -69,6 +71,7 @@ pub fn spawn_hero(
     command_buffer.add_component(spawned, attach_camera);
     command_buffer.add_component(spawned, camera);
     command_buffer.add_component(spawned, window_size);
+    command_buffer.add_component(spawned, visible);
 }
 
 #[system(for_each)]
