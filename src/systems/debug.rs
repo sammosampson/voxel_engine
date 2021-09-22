@@ -25,7 +25,7 @@ pub fn add_debugging_to_world(world: &mut legion::World) {
 pub fn aggregate_statistics(
     world: &mut SubWorld
 ) {  
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::AggregateStatistics);
+    let timed_block = debug::start_timed_block(debug::CycleCounter::AggregateStatistics);
     
     let total_cycles = debug::read_statistics(debug::CycleCounterMeasurementsChannelReaders::AggregateTotal)
         .fold(0, |running_total: u64, measurement| {

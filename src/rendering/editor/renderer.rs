@@ -31,7 +31,7 @@ impl EditorRenderer {
             return SubRendererResult::None;
         }
 
-        let timed_block = debug::TimedBlock::start(debug::CycleCounter::RenderEditor);
+        let timed_block = debug::start_timed_block(debug::CycleCounter::RenderEditor);
 
         self.egui.begin_frame(display);
         let mut visuals = egui::Visuals::dark();

@@ -1,22 +1,14 @@
-use legion::*;
-use crate::cameras;
-use crate::rendering;
-use crate::math;
-use crate::events;
-use crate::input;
-use crate::debug;
-use crate::position;
-use crate::physics;
+use crate::prelude::*;
 
 #[system(for_each)]
-#[filter(!component::<debug::EditorVisible>())]
+#[filter(!component::<EditorVisible>())]
 pub fn follow_with_attached_camera(
-    camera: &mut cameras::Camera,
-    attach_camera: &cameras::AttachCamera,
-    position: &position::Position,
-    heading: &physics::Heading
+    camera: &mut Camera,
+    attach_camera: &AttachCamera,
+    position: &Position,
+    heading: &Heading
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::FollowWithAttachedCamera);
+    let timed_block = start_timed_block(CycleCounter::FollowWithAttachedCamera);
     camera.position = position.value + attach_camera.offset_position;
     camera.direction = heading.value + attach_camera.offset_direction;
 
@@ -25,12 +17,12 @@ pub fn follow_with_attached_camera(
 
 #[system(for_each)]
 pub fn set_camera_to_render_view_matrix(
-    camera: &cameras::Camera, 
-    #[resource] graph: &mut rendering::WorldRenderGraph
+    camera: &Camera, 
+    #[resource] graph: &mut WorldRenderGraph
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::SetCameraToRenderViewMatrix);
+    let timed_block = start_timed_block(CycleCounter::SetCameraToRenderViewMatrix);
 
-    graph.view = math::Matrix4x4::view(
+    graph.view = Matrix4x4::view(
         camera.position, 
         camera.direction, 
         camera.up
@@ -41,22 +33,21 @@ pub fn set_camera_to_render_view_matrix(
 
 #[system(for_each)]
 pub fn move_camera_from_editor(
-    camera: &mut cameras::Camera,
-    #[resource] event_channel: &mut shrev::EventChannel<events::SystemEvent>,
-    #[resource] event_registration: &mut events::EventChannelRegistrar
+    camera: &mut Camera,
+    #[resource] event_channel: &mut shrev::EventChannel<SystemEvent>,
+    #[resource] event_registration: &mut EventChannelRegistrar
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::MoveCameraFromEditor);
+    let timed_block = start_timed_block(CycleCounter::MoveCameraFromEditor);
 
-    for event in event_channel.read(event_registration.lookup_registration(events::EventChannelRegistrationType::CameraMovementFromEditor)) {
-        match event {
-            events::SystemEvent::EditorChange(editor_event) => {
-                match editor_event {
-                    events::EditorEvent::CameraPositionChanged(position) => camera.position = *position,
-                    events::EditorEvent::CameraDirectionChanged(direction) => camera.direction = *direction,
-                    events::EditorEvent::CameraUpChanged(up) => camera.up = *up,
-                    _ => {}
-                }
-            },
+    for editor_event in read_editor_event_using_registration(
+        event_channel,
+        event_registration,
+        EventChannelRegistrationType::CameraMovementFromEditor
+    ) {
+        match editor_event {
+            EditorEvent::CameraPositionChanged(position) => camera.position = *position,
+            EditorEvent::CameraDirectionChanged(direction) => camera.direction = *direction,
+            EditorEvent::CameraUpChanged(up) => camera.up = *up,
             _ => {}
         }
     }
@@ -65,13 +56,13 @@ pub fn move_camera_from_editor(
 }
 
 #[system(for_each)]
-#[filter(component::<debug::EditorVisible>())]
+#[filter(component::<EditorVisible>())]
 pub fn move_editor_camera_from_mouse_action(
-    input: &input::MouseInput,
-    camera: &mut cameras::Camera,
-    window_size: &rendering::WindowSize
+    input: &MouseInput,
+    camera: &mut Camera,
+    window_size: &WindowSize
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::MoveEditorCameraFromMouseInput);
+    let timed_block = start_timed_block(CycleCounter::MoveEditorCameraFromMouseInput);
 
     let mut last_action = &input.last_previous_action;
 
@@ -82,12 +73,12 @@ pub fn move_editor_camera_from_mouse_action(
                 continue;
             }
 
-            let translation = math::Vector4::position(
+            let translation = Vector4::position(
                 -(delta.x / window_size.size.width) * 10.0, 
                 (delta.y / window_size.size.height) * 10.0,
                 0.0);
 
-            camera.position = math::Matrix4x4::translation(translation) * camera.position;            
+            camera.position = Matrix4x4::translation(translation) * camera.position;            
         }
 
         if last_action.right_button_pressed() && next_action.right_button_pressed_or_released() {
@@ -98,8 +89,8 @@ pub fn move_editor_camera_from_mouse_action(
             }
 
             camera.direction = 
-                math::Matrix4x4::x_rotation(-delta.y / window_size.size.height) 
-                * math::Matrix4x4::y_rotation(delta.x / window_size.size.width) 
+                Matrix4x4::x_rotation(-delta.y / window_size.size.height) 
+                * Matrix4x4::y_rotation(delta.x / window_size.size.width) 
                 * camera.direction;
         }
 

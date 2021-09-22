@@ -57,7 +57,7 @@ pub fn position_chunks(
     chunk_position: &terrain::ChunkPosition, 
     component_buffer: &mut CommandBuffer
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::PositionChunks);
+    let timed_block = debug::start_timed_block(debug::CycleCounter::PositionChunks);
     let world_position = position::Position::from(chunk_position.absolute_centre());
     component_buffer.add_component(*entity, world_position);
     timed_block.stop();
@@ -70,7 +70,7 @@ pub fn tesselate_chunk_front_faces(
     chunk: &terrain::Chunk, 
     component_buffer: &mut CommandBuffer
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::TesselateChunkFrontMesh);
+    let timed_block = debug::start_timed_block(debug::CycleCounter::TesselateChunkFrontMesh);
     let mut mesh = terrain::ChunkFrontMesh::default();
     mesh.tesselate(chunk);
     component_buffer.add_component(*entity, mesh);
@@ -84,7 +84,7 @@ pub fn tesselate_chunk_back_faces(
     chunk: &terrain::Chunk, 
     component_buffer: &mut CommandBuffer
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::TesselateChunkBackMesh);
+    let timed_block = debug::start_timed_block(debug::CycleCounter::TesselateChunkBackMesh);
     let mut mesh = terrain::ChunkBackMesh::default();
     mesh.tesselate(chunk);
     component_buffer.add_component(*entity, mesh);
@@ -98,7 +98,7 @@ pub fn tesselate_chunk_top_faces(
     chunk: &terrain::Chunk, 
     component_buffer: &mut CommandBuffer
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::TesselateChunkTopMesh);
+    let timed_block = debug::start_timed_block(debug::CycleCounter::TesselateChunkTopMesh);
     let mut mesh = terrain::ChunkTopMesh::default();
     mesh.tesselate(chunk);
     component_buffer.add_component(*entity, mesh);
@@ -112,7 +112,7 @@ pub fn tesselate_chunk_left_faces(
     chunk: &terrain::Chunk, 
     component_buffer: &mut CommandBuffer
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::TesselateChunkLeftMesh);
+    let timed_block = debug::start_timed_block(debug::CycleCounter::TesselateChunkLeftMesh);
     let mut mesh = terrain::ChunkLeftMesh::default();
     mesh.tesselate(chunk);
     component_buffer.add_component(*entity, mesh);
@@ -126,7 +126,7 @@ pub fn tesselate_chunk_right_faces(
     chunk: &terrain::Chunk, 
     component_buffer: &mut CommandBuffer
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::TesselateChunkRightMesh);
+    let timed_block = debug::start_timed_block(debug::CycleCounter::TesselateChunkRightMesh);
     let mut mesh = terrain::ChunkRightMesh::default();
     mesh.tesselate(chunk);
     component_buffer.add_component(*entity, mesh);
@@ -145,7 +145,7 @@ pub fn merge_chunk_mesh(
     #[resource] graph: &mut rendering::WorldRenderGraph,
     buffer: &mut CommandBuffer,
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::MergeChunkMesh);
+    let timed_block = debug::start_timed_block(debug::CycleCounter::MergeChunkMesh);
     let mut vertices = vec!();
     vertices.append(&mut front.clone().vertices);
     vertices.append(&mut back.clone().vertices);

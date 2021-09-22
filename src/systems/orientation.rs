@@ -13,7 +13,7 @@ pub fn constant_rotation(
     speed: &rotation::ConstantRotation,
     rotation: &mut rotation::Rotation
 ) {   
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::ConstantRotation);
+    let timed_block = debug::start_timed_block(debug::CycleCounter::ConstantRotation);
     rotation.x = calculate_rotation(rotation.x, speed.x_revoloutions_per_second, time);
     rotation.y = calculate_rotation(rotation.y, speed.y_revoloutions_per_second, time);
     timed_block.stop();
@@ -33,7 +33,7 @@ pub fn set_world_node_rotation(
     rotation: &rotation::Rotation, 
     #[resource] render_graph: &mut rendering::WorldRenderGraph
     ) {
-        let timed_block = debug::TimedBlock::start(debug::CycleCounter::SetWorldNodeOrientation);
+        let timed_block = debug::start_timed_block(debug::CycleCounter::SetWorldNodeOrientation);
         
         render_graph
             .find(entity)
@@ -50,7 +50,7 @@ pub fn set_world_node_position(
     position: &position::Position, 
     #[resource] render_graph: &mut rendering::WorldRenderGraph
     ) {
-        let timed_block = debug::TimedBlock::start(debug::CycleCounter::SetWorldNodeOrientation);
+        let timed_block = debug::start_timed_block(debug::CycleCounter::SetWorldNodeOrientation);
         
         render_graph
             .find(entity)

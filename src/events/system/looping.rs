@@ -25,7 +25,7 @@ impl SystemEventLoop {
         event_channel: &mut shrev::EventChannel::<super::super::SystemEvent>,
         renderer: &mut rendering::ScreenRenderer
     ) {
-        let timed_block = debug::TimedBlock::start(debug::CycleCounter::EventLoop);
+        let timed_block = debug::start_timed_block(debug::CycleCounter::EventLoop);
     
         self.inner.run_return(|event, _, flow| {
             match event {

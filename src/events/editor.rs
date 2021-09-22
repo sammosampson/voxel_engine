@@ -4,6 +4,7 @@ use crate::math;
 
 #[derive(Debug)]
 pub enum EditorEvent {
+    None,
     SetWindowVisibility(bool, String),
     EntityNodeSelect(String),
     CameraPositionChanged(math::Vector4),

@@ -8,6 +8,10 @@ pub fn initialise_debugging() {
     cycles::initialise();
 }
 
+pub fn start_timed_block(counter: cycles::CycleCounter) -> cycles::TimedBlock {
+    cycles::TimedBlock::start(counter)
+}
+
 #[derive(Default, Clone, Copy, Debug)]
 pub struct Debug {
 }

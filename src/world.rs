@@ -2,9 +2,7 @@ pub struct WorldEntityId {
     pub name: String
 }
 
-#[derive(Default)]
-pub struct WorldEntitySelected {
-}
+pub struct WorldEntitySelected;
 
 pub struct Visible(pub bool);
 

@@ -82,7 +82,7 @@ pub fn move_hero_from_mouse_action(
     heading: &mut physics::Heading,
     window_size: &rendering::WindowSize
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::MoveHeroFromMouseInput);
+    let timed_block = debug::start_timed_block(debug::CycleCounter::MoveHeroFromMouseInput);
 
     let mut last_action = &input.last_previous_action;
 

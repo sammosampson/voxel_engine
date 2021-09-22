@@ -17,7 +17,7 @@ pub fn set_render_lighting(
     light: &lighting::Light, 
     #[resource] graph: &mut rendering::WorldRenderGraph
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::SetRenderLighting);
+    let timed_block = debug::start_timed_block(debug::CycleCounter::SetRenderLighting);
     graph.light_direction = light.direction;
     timed_block.stop();
 }

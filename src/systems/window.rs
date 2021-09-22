@@ -1,23 +1,22 @@
-
-use legion::*;
-use crate::application;
-use crate::events;
-use crate::rendering;
-use crate::debug;
+use crate::prelude::*;
 
 #[system(for_each)]
 pub fn process_window_events(
-    window_size: &mut rendering::WindowSize,
-    #[resource] event_channel: &mut shrev::EventChannel<events::SystemEvent>,
-    #[resource] event_registration: &mut events::EventChannelRegistrar,
-    #[resource] exit_state_notifier: &mut application::ExitStateNotifier
+    window_size: &mut WindowSize,
+    #[resource] event_channel: &mut EventChannel<SystemEvent>,
+    #[resource] event_registration: &mut EventChannelRegistrar,
+    #[resource] exit_state_notifier: &mut ExitStateNotifier
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::StoreWindowInformation);
+    let timed_block = start_timed_block(CycleCounter::StoreWindowInformation);
 
-    for event in event_channel.read(event_registration.lookup_registration(events::EventChannelRegistrationType::Window)) {
+    for event in read_events_using_registration(
+        event_channel,
+        event_registration,
+        EventChannelRegistrationType::Window
+    ) {
         match event {
-            events::SystemEvent::Resized(size) => window_size.size = *size,
-            events::SystemEvent::CloseRequested => exit_state_notifier.should_exit = true,
+            SystemEvent::Resized(size) => window_size.size = *size,
+            SystemEvent::CloseRequested => exit_state_notifier.should_exit = true,
             _ => {}
         }
     }

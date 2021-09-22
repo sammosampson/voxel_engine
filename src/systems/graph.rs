@@ -17,7 +17,7 @@ pub fn build_world_graph_for_mesh(
     #[resource] graph: &mut rendering::WorldRenderGraph,
     buffer: &mut legion::systems::CommandBuffer,
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::BuildWorldGraphForMesh);
+    let timed_block = debug::start_timed_block(debug::CycleCounter::BuildWorldGraphForMesh);
     graph.add_mesh(*entity, mesh.data.clone());
     buffer.add_component(*entity, rendering::RenderGraphSet::default());
     timed_block.stop();
@@ -29,7 +29,7 @@ pub fn set_editor_state_on_graph(
     editor_visible: Option<&debug::EditorVisible>,
     #[resource] graph: &mut rendering::EditorRenderGraph
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::SetEditorStateOnRenderer);
+    let timed_block = debug::start_timed_block(debug::CycleCounter::SetEditorStateOnRenderer);
     graph.set_state(editor, editor_visible.is_some());    
     timed_block.stop();
 }
@@ -43,7 +43,7 @@ pub fn set_editor_controls (
     #[resource] graph: &mut rendering::EditorRenderGraph,
 
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::SetEditorStateOnRenderer);
+    let timed_block = debug::start_timed_block(debug::CycleCounter::SetEditorStateOnRenderer);
     
     graph.add_control(graph::create_main_sidebar());
     graph.add_control(graph::create_camera_window());
@@ -60,7 +60,7 @@ pub fn build_editor_render_graph_for_statistics(
     time: &time::ElapsedTime, 
     #[resource] graph: &mut rendering::EditorRenderGraph
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::BuildEditorRenderGraphForStatistics);
+    let timed_block = debug::start_timed_block(debug::CycleCounter::BuildEditorRenderGraphForStatistics);
     graph.add_float_data(rendering::EditorRenderGraphDataItem::ElapsedTime, time.seconds * 1000.0);    
     timed_block.stop();
 }
@@ -70,7 +70,7 @@ pub fn build_editor_render_graph_for_editor_state(
     editor: &debug::EditorState, 
     #[resource] graph: &mut rendering::EditorRenderGraph
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::BuildEditorRenderGraphForEditorState);
+    let timed_block = debug::start_timed_block(debug::CycleCounter::BuildEditorRenderGraphForEditorState);
     graph.add_boolean_data(rendering::EditorRenderGraphDataItem::CameraWindowVisibiity, editor.is_window_visible(graph::CAMERA_WINDOW_NAME));
     graph.add_boolean_data(rendering::EditorRenderGraphDataItem::MeasurementWindowVisibiity, editor.is_window_visible(graph::MEASUREMENTS_WINDOW_NAME));    
     graph.add_boolean_data(rendering::EditorRenderGraphDataItem::EntityWindowVisibiity, editor.is_window_visible(graph::ENTITIES_WINDOW_NAME));    
@@ -82,7 +82,7 @@ pub fn build_editor_render_graph_for_measurements(
     measurement: &debug::BlockPerformanceMeasurement, 
     #[resource] graph: &mut rendering::EditorRenderGraph
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::BuildEditorRenderGraphForMeasurements);
+    let timed_block = debug::start_timed_block(debug::CycleCounter::BuildEditorRenderGraphForMeasurements);
 
     let mut row = HashMap::default();
     row.insert(rendering::EditorRenderGraphDataItem::MeasurementName, rendering::EditorRenderGraphData::String { value: measurement.counter.to_string() });
@@ -100,7 +100,7 @@ pub fn build_editor_render_graph_for_world_entities(
     world_entity_selected: Option<&world::WorldEntitySelected>,
     #[resource] graph: &mut rendering::EditorRenderGraph
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::BuildEditorRenderGraphForWorldEntities);
+    let timed_block = debug::start_timed_block(debug::CycleCounter::BuildEditorRenderGraphForWorldEntities);
 
     graph.add_list_item(
         rendering::EditorRenderGraphDataItem::EntityNode,
@@ -116,7 +116,7 @@ pub fn build_editor_render_graph_for_camera(
     camera: &cameras::Camera, 
     #[resource] graph: &mut rendering::EditorRenderGraph
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::BuildEditorRenderGraphForCamera);
+    let timed_block = debug::start_timed_block(debug::CycleCounter::BuildEditorRenderGraphForCamera);
     graph.add_vector4_data(rendering::EditorRenderGraphDataItem::CameraPosition, camera.position);
     graph.add_vector4_data(rendering::EditorRenderGraphDataItem::CameraDirection, camera.direction);
     graph.add_vector4_data(rendering::EditorRenderGraphDataItem::CameraUp, camera.up);  

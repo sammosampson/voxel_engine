@@ -1,72 +1,69 @@
-use legion::*;
-use crate::world;
-use crate::rendering;
-use crate::events;
-use crate::debug;
+use crate::prelude::*;
 
 #[system(simple)]
-#[read_component(world::WorldEntityId)]
-#[read_component(world::WorldEntitySelected)]
+#[read_component(WorldEntityId)]
+#[read_component(WorldEntitySelected)]
 pub fn world_entity_selection_from_input(
-    world: &legion::world::SubWorld,
-    #[resource] event_channel: &mut shrev::EventChannel<events::SystemEvent>,
-    #[resource] event_registration: &mut events::EventChannelRegistrar,
-    command_buffer: &mut legion::systems::CommandBuffer
+    world: &SubWorld,
+    #[resource] event_channel: &mut EventChannel<SystemEvent>,
+    #[resource] event_registration: &mut EventChannelRegistrar,
+    command_buffer: &mut CommandBuffer
 ) {
-    let timed_block = debug::TimedBlock::start(debug::CycleCounter::WorldEntitySelectionFromInput);
+    let timed_block = start_timed_block(CycleCounter::WorldEntitySelectionFromInput);
 
-    for event in event_channel.read(event_registration.lookup_registration(events::EventChannelRegistrationType::WorldEntitySelectionFromInput)) {
-        match event {
-            events::SystemEvent::EditorChange(editor_event) => {
-                match editor_event {
-                    events::EditorEvent::EntityNodeSelect(id) => 
-                        toggle_world_entity_selection(id, world, command_buffer),
-                    _ => {}
-                }
-            },
+    
+    for editor_event in read_editor_event_using_registration(
+        event_channel,
+        event_registration,
+        EventChannelRegistrationType::WorldEntitySelectionFromInput
+    ) {
+        match editor_event {
+            EditorEvent::EntityNodeSelect(id) => 
+                toggle_world_entity_selection(id, world, command_buffer),
             _ => {}
         }
     }
-    
+ 
     timed_block.stop();
 }
 
 fn toggle_world_entity_selection(
     selected_id: &str,
-    world: &legion::world::SubWorld,
-    command_buffer: &mut legion::systems::CommandBuffer
+    world: &SubWorld,
+    command_buffer: &mut CommandBuffer
 ) {                   
-    let mut query = <(legion::Entity, &world::WorldEntityId, TryRead<world::WorldEntitySelected>)>
+    let mut query = <(Entity, &WorldEntityId, TryRead<WorldEntitySelected>)>
         ::query();
 
     for (entity, id, selected) in query.iter(world) {
         if selected.is_none() && selected_id == id.name {
-            command_buffer.add_component(*entity, world::WorldEntitySelected::default());
+            command_buffer.add_component(*entity, WorldEntitySelected);
         } else {
-            command_buffer.remove_component::<world::WorldEntitySelected>(*entity);
+            command_buffer.remove_component::<WorldEntitySelected>(*entity);
         }
     }
 }
 
 #[system]
-#[read_component(world::WorldEntitySelected)]
-#[write_component(world::Visible)]
-pub fn world_entity_selection_hides_all_other_entities(world: &mut legion::world::SubWorld) {
-    if <&world::WorldEntitySelected>::query().iter(world).count() == 0 {
+#[read_component(WorldEntitySelected)]
+#[write_component(Visible)]
+pub fn world_entity_selection_hides_all_other_entities(world: &mut SubWorld
+) {
+    if <&WorldEntitySelected>::query().iter(world).count() == 0 {
         return;
     }
 
-    <(&mut world::Visible, Option<&world::WorldEntitySelected>)>::query()
+    <(&mut Visible, Option<&WorldEntitySelected>)>::query()
         .iter_mut(world)
-        .for_each(|(visible, selected)| *visible = world::Visible(selected.is_some()));
+        .for_each(|(visible, selected)| *visible = Visible(selected.is_some()));
 }
 
 
 #[system(for_each)]
 pub fn set_world_visibility(
     entity: &Entity,
-    visible: &world::Visible, 
-    #[resource] graph: &mut rendering::WorldRenderGraph
+    visible: &Visible, 
+    #[resource] graph: &mut WorldRenderGraph
 ) {
     graph.find(entity).unwrap().set_visibility(visible.0);
 }

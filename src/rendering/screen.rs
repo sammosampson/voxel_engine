@@ -52,9 +52,9 @@ impl ScreenRenderer {
         event_producer: &mut events::SystemEventProducer
     ) {
 
-        let timed_block = debug::TimedBlock::start(debug::CycleCounter::Render);
+        let timed_block = debug::start_timed_block(debug::CycleCounter::Render);
 
-        let starting_timed_block = debug::TimedBlock::start(debug::CycleCounter::RenderStart);
+        let starting_timed_block = debug::start_timed_block(debug::CycleCounter::RenderStart);
         let mut target = self.display.draw();
         target.clear_color_and_depth((0.0, 0.0, 1.0, 1.0), 1.0);
         let target_dimensions = target.get_dimensions();
@@ -64,7 +64,7 @@ impl ScreenRenderer {
         results.push(self.world_renderer.render(world_graph, target_dimensions, &mut self.display, &mut target));
         results.push(self.editor_renderer.render(editor_graph, event_producer, &self.display, &mut target));
 
-        let stopping_timed_block = debug::TimedBlock::start(debug::CycleCounter::RenderEnd);
+        let stopping_timed_block = debug::start_timed_block(debug::CycleCounter::RenderEnd);
         target.finish().unwrap();
         stopping_timed_block.stop();
 
