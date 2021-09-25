@@ -1,10 +1,10 @@
 use crate::prelude::*;
 
 #[system(for_each)]
-pub fn set_world_visibility(
+pub fn set_render_style(
     entity: &Entity,
-    visible: &Visible, 
+    style: &RenderStyle, 
     #[resource] graph: &mut WorldRenderGraph
 ) {
-    graph.find(entity).unwrap().set_visibility(visible.0);
+    graph.find(entity).unwrap().set_render_style(*style);
 }

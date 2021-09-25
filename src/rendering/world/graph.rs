@@ -2,8 +2,9 @@ use std::collections::HashMap;
 use glium::Surface;
 use legion::Entity;
 use crate::math::Vector4;
-use crate::mesh;
+use crate::geomtery;
 use crate::math;
+use super::RenderStyle;
 use super::textures;
 use super::shaders;
 use glium::implement_vertex;
@@ -12,7 +13,7 @@ use glium::implement_vertex;
 pub struct RenderGraphSet;
 
 #[derive(Debug, Copy, Clone)]
-pub struct Vertex {
+struct Vertex {
     position: [f32; 3],
     normal: [f32; 3],
     colour: [f32; 3],
@@ -21,7 +22,7 @@ pub struct Vertex {
 
 implement_vertex!(Vertex, position, normal, colour, tex_coords);
 
-impl Into<Vec<Vertex>> for &mesh::Mesh {
+impl Into<Vec<Vertex>> for &geomtery::Mesh {
     fn into(self) -> Vec<Vertex> {
         self.data
             .iter()
@@ -30,7 +31,7 @@ impl Into<Vec<Vertex>> for &mesh::Mesh {
     }
 }
 
-impl Into<Vertex> for &mesh::Vertex {
+impl Into<Vertex> for &geomtery::Vertex {
     fn into(self) -> Vertex {
         Vertex {
             position: self.position.into(), 
@@ -60,8 +61,8 @@ impl WorldRenderGraph {
         self.nodes.insert(entity, node);
     }
     
-    pub fn add_mesh(&mut self, entity: Entity, vertices: Vec<mesh::Vertex>) {
-        self.add_node(entity, WorldRenderGraphNode::new(WorldRenderGraphNodeType::Mesh(MeshGraphNode::new(mesh::Mesh::new(vertices)))));
+    pub fn add_mesh(&mut self, entity: Entity, vertices: Vec<geomtery::Vertex>) {
+        self.add_node(entity, WorldRenderGraphNode::new(WorldRenderGraphNodeType::Mesh(MeshGraphNode::new(geomtery::Mesh::new(vertices)))));
     }
 
     pub fn find(&mut self, entity: &Entity) -> Option<&mut WorldRenderGraphNode> {
@@ -83,7 +84,8 @@ pub struct WorldRenderGraphNode {
     position: math::Matrix4x4,
     rotation: math::Matrix4x4,
     node_type: WorldRenderGraphNodeType,
-    visible: bool
+    visible: bool,
+    render_style: RenderStyle
 }
 
 impl WorldRenderGraphNode {
@@ -92,7 +94,8 @@ impl WorldRenderGraphNode {
             node_type,
             position: math::Matrix4x4::identity(),
             rotation: math::Matrix4x4::identity(),
-            visible: true
+            visible: true,
+            render_style: RenderStyle::Fill
         }
     }
 
@@ -106,6 +109,10 @@ impl WorldRenderGraphNode {
 
     pub fn set_visibility(&mut self, to_set: bool) {
         self.visible = to_set;
+    }
+    
+    pub fn set_render_style(&mut self, to_set: RenderStyle) {
+        self.render_style = to_set;
     }
     
     pub fn draw(
@@ -122,7 +129,7 @@ impl WorldRenderGraphNode {
 
         match &mut self.node_type {
             WorldRenderGraphNodeType::Mesh(mesh_node) => {
-                mesh_node.draw(display, target, self.rotation * self.position, perspective, view, light_direction);
+                mesh_node.draw(display, target, self.rotation * self.position, perspective, view, light_direction, self.render_style);
             },
         }
     }
@@ -134,12 +141,12 @@ pub enum WorldRenderGraphNodeType {
 }
 
 pub struct MeshGraphNode {
-    mesh: mesh::Mesh,
+    mesh: geomtery::Mesh,
     glium_mesh: Option<GliumMesh>
 }
 
 impl MeshGraphNode {
-    pub fn new(mesh: mesh::Mesh) -> Self {
+    pub fn new(mesh: geomtery::Mesh) -> Self {
         Self {
             mesh,
             glium_mesh: None
@@ -153,7 +160,8 @@ impl MeshGraphNode {
         orientation: math::Matrix4x4,
         perspective: math::Matrix4x4,
         view: math::Matrix4x4,
-        light_direction: Vector4
+        light_direction: Vector4,
+        render_style: RenderStyle
     ) { 
         if self.glium_mesh.is_none() {
             self.glium_mesh = Some(GliumMesh::new(display, &self.mesh))
@@ -162,7 +170,7 @@ impl MeshGraphNode {
         self.glium_mesh
             .as_ref()
             .unwrap()
-            .draw(target, orientation, perspective, view, light_direction);
+            .draw(target, orientation, perspective, view, light_direction, render_style);
     }
 }
 
@@ -173,7 +181,7 @@ pub struct GliumMesh {
 }
 
 impl GliumMesh {
-    pub fn new(display: &glium::Display, mesh: &mesh::Mesh) -> Self {
+    pub fn new(display: &glium::Display, mesh: &geomtery::Mesh) -> Self {
         let vertex_data: Vec<Vertex> = mesh.into(); 
         Self {
             vertices: glium::vertex::VertexBuffer::immutable(display, &vertex_data).unwrap(),
@@ -182,7 +190,15 @@ impl GliumMesh {
         }
     }
 
-    fn draw(&self, target: &mut glium::Frame, orientation: math::Matrix4x4, perspective: math::Matrix4x4, view: math::Matrix4x4, light_direction: Vector4) {
+    fn draw(
+        &self,
+        target: &mut glium::Frame,
+        orientation: math::Matrix4x4,
+        perspective: math::Matrix4x4,
+        view: math::Matrix4x4,
+        light_direction: Vector4,
+        render_style: RenderStyle
+    ) {
         let model: [[f32; 4]; 4] = orientation.into_column_major();
         let view: [[f32; 4]; 4] = view.into_column_major();
         let perspective: [[f32; 4]; 4] = perspective.into_column_major();
@@ -194,7 +210,7 @@ impl GliumMesh {
                 write: true,
                 .. Default::default()
             },
-            polygon_mode: glium::PolygonMode::Fill,
+            polygon_mode: render_style.into(),
             backface_culling: glium::BackfaceCullingMode::CullClockwise,
             .. Default::default()
         };
@@ -213,5 +229,14 @@ impl GliumMesh {
                 },
                 &params)
             .unwrap();
+    }
+}
+
+impl Into<glium::PolygonMode> for RenderStyle {
+    fn into(self) -> glium::PolygonMode {
+        match self {
+            RenderStyle::Fill =>  glium::PolygonMode::Fill,
+            RenderStyle::Wireframe =>  glium::PolygonMode::Line,
+        }
     }
 }

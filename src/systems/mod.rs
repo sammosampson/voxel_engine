@@ -10,6 +10,7 @@ mod terrain;
 mod hero;
 mod apply_heading_and_velocity_to_position;
 mod world;
+mod set_render_style;
 
 pub use calculate_elapsed_time::*;
 pub use process_window_events::*;
@@ -23,3 +24,4 @@ pub use terrain::*;
 pub use hero::*;
 pub use apply_heading_and_velocity_to_position::*;
 pub use world::*;
+pub use set_render_style::*;

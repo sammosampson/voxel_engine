@@ -35,6 +35,7 @@ pub fn spawn_hero(
     };
 
     let visible = Visible(true);
+    let render_style = RenderStyle::Fill;
     
     let spawned = command_buffer.push((
         world_id,
@@ -52,4 +53,5 @@ pub fn spawn_hero(
     command_buffer.add_component(spawned, camera);
     command_buffer.add_component(spawned, window_size);
     command_buffer.add_component(spawned, visible);
+    command_buffer.add_component(spawned, render_style);
 }

@@ -7,7 +7,7 @@ mod events;
 mod debug;
 mod math;
 mod time;
-mod mesh;
+mod geomtery;
 mod input;
 mod cameras;
 mod lighting;
@@ -36,7 +36,7 @@ mod prelude {
     pub use crate::physics::*;
     pub use crate::time::*;
     pub use crate::hero::*;
-    pub use crate::mesh::*;
+    pub use crate::geomtery::*;
     pub use crate::rotation::*;
     pub use crate::lighting::*;
     pub use crate::graph::*;
