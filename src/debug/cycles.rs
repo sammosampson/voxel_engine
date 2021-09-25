@@ -107,6 +107,7 @@ cycle_counter! {
     EventLoop,
     MouseInput,
     EditorStateFromInput,
+    EditorVisibilityFromInput,
     SetEditorStateOnRenderer,
     StoreWindowInformation,
     ConstantRotation,

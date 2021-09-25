@@ -18,6 +18,8 @@ mod physics;
 mod world;
 
 mod prelude {
+    pub use std::collections::HashMap; 
+    pub use itertools::Itertools; 
     pub use shrev::{EventChannel, EventIterator};
     pub use legion::*;
     pub use legion::systems::CommandBuffer;
@@ -32,6 +34,13 @@ mod prelude {
     pub use crate::input::*;
     pub use crate::position::*;
     pub use crate::physics::*;
+    pub use crate::time::*;
+    pub use crate::hero::*;
+    pub use crate::mesh::*;
+    pub use crate::rotation::*;
+    pub use crate::lighting::*;
+    pub use crate::graph::*;
+    pub use crate::terrain::*;
 }
 
 fn main() {

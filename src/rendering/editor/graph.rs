@@ -133,9 +133,7 @@ pub enum EditorRenderGraphDataItem {
     CameraDirection,
     CameraUp,
     EntityWindowVisibiity,
-    EntityNode,
-    EntityPosition,
-    EntityVertexCount,
+    EntityNode
 }
 
 impl Display for EditorRenderGraphDataItem {
@@ -151,8 +149,6 @@ impl Display for EditorRenderGraphDataItem {
             EditorRenderGraphDataItem::CameraPosition => f.write_str("Position"),
             EditorRenderGraphDataItem::CameraDirection => f.write_str("Direction"),
             EditorRenderGraphDataItem::CameraUp => f.write_str("Up"),
-            EditorRenderGraphDataItem::EntityPosition => f.write_str("Position"),
-            EditorRenderGraphDataItem::EntityVertexCount => f.write_str("Verts"),
             _ => f.write_str("")
         }
     }
