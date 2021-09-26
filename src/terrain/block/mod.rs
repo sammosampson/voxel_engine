@@ -1,8 +1,10 @@
 mod position;
 mod block_type;
+mod iterators;
 
 pub use position::*;
 pub use block_type::*;
+pub use iterators::*;
 
 use crate::prelude::*;
 
