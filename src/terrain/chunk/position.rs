@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ChunkPosition {
     x: i64,
     z: i64,
@@ -22,3 +22,12 @@ impl ChunkPosition {
         )
     }
 }
+
+impl From<ChunkPosition> for WorldEntityId {
+    fn from(position: ChunkPosition) -> Self {
+        Self {
+            name: format!("chunk{:?}{:?}", position.x, position.z)
+        }
+    }
+}
+
