@@ -8,6 +8,7 @@ pub use iterators::*;
 
 use crate::prelude::*;
 
+#[derive(Debug)]
 pub struct Block {
     position: BlockPosition
 }

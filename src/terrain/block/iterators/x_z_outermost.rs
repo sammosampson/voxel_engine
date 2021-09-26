@@ -1,29 +1,17 @@
 use crate::prelude::*;
 
-pub struct XZOuterMostBlockIterator<'a, TColumnPositionIterator> 
+pub struct OuterMostBlockIterator<'a, TColumnPositionIterator> 
 where TColumnPositionIterator: Iterator<Item=ColumnPosition> + Default {
-    on_x_axis: bool,
     chunk: &'a Chunk,
     current_column_position: TColumnPositionIterator,
     current_block_position: BlockPosition,
     current_height_watermark: usize
 }
 
-impl<'a, TColumnPositionIterator> XZOuterMostBlockIterator<'a, TColumnPositionIterator> 
-where TColumnPositionIterator: Iterator<Item=ColumnPosition> + Default {
-    pub fn x(chunk: &'a Chunk) -> Self {
+impl<'a, TColumnPositionIterator> OuterMostBlockIterator<'a, TColumnPositionIterator> 
+where TColumnPositionIterator: Iterator<Item=ColumnPosition> + MainDimenisionMinimumCheck + Default {
+    pub fn new(chunk: &'a Chunk) -> Self {
         Self {
-            on_x_axis: true,
-            chunk,
-            current_column_position: TColumnPositionIterator::default(),
-            current_block_position: BlockPosition::default(),
-            current_height_watermark: 0
-        }
-    }
-
-    pub fn z(chunk: &'a Chunk) -> Self {
-        Self {
-            on_x_axis: false,
             chunk,
             current_column_position: TColumnPositionIterator::default(),
             current_block_position: BlockPosition::default(),
@@ -32,8 +20,8 @@ where TColumnPositionIterator: Iterator<Item=ColumnPosition> + Default {
     }
 }
 
-impl<'a, TColumnPositionIterator> Iterator for XZOuterMostBlockIterator<'a, TColumnPositionIterator> 
-where TColumnPositionIterator: Iterator<Item=ColumnPosition> + Default {
+impl<'a, TColumnPositionIterator> Iterator for OuterMostBlockIterator<'a, TColumnPositionIterator> 
+where TColumnPositionIterator: Iterator<Item=ColumnPosition> + MainDimenisionMinimumCheck + Default {
     type Item = Block;
 
     fn next(&mut self) -> Option<Self::Item> {    
@@ -41,8 +29,7 @@ where TColumnPositionIterator: Iterator<Item=ColumnPosition> + Default {
             loop {
                 let column_position = self.current_column_position.next();
                 if let Some(column_position) = column_position {
-                    if (self.on_x_axis && column_position.x() == 0) 
-                        || (!self.on_x_axis && column_position.z() == 0) {
+                    if self.current_column_position.at_main_dimension_minimum() {
                         self.current_height_watermark = 0;
                     }
                     

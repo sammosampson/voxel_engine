@@ -13,6 +13,7 @@ impl BlockPosition {
             x, y, z
         }
     }
+    
     pub fn increase_height(&self) -> Self {
         Self {
             x: self.x, 

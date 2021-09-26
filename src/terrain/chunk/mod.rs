@@ -51,18 +51,18 @@ impl Chunk {
     }
 
     pub fn left_most_blocks<'a>(&'a self) -> Box<dyn Iterator<Item=Block> + 'a>   {
-        Box::new(XZOuterMostBlockIterator::<'a, XZColumnPositionIterator>::x(self))
+        Box::new(OuterMostBlockIterator::<'a, XZColumnPositionIterator>::new(self))
     }
 
     pub fn right_most_blocks<'a>(&'a self) -> Box<dyn Iterator<Item=Block> + 'a>   {
-        Box::new(XZOuterMostBlockIterator::<'a, ReverseXZColumnPositionIterator>::x(self))
+        Box::new(OuterMostBlockIterator::<'a, ReverseXZColumnPositionIterator>::new(self))
     }
 
     pub fn front_most_blocks<'a>(&'a self) -> Box<dyn Iterator<Item=Block> + 'a>   {
-        Box::new(XZOuterMostBlockIterator::<'a, ZXColumnPositionIterator>::z(self))
+        Box::new(OuterMostBlockIterator::<'a, ZXColumnPositionIterator>::new(self))
     }
 
     pub fn back_most_blocks<'a>(&'a self) -> Box<dyn Iterator<Item=Block> + 'a>   {
-        Box::new(XZOuterMostBlockIterator::<'a, ReverseZXColumnPositionIterator>::z(self))
+        Box::new(OuterMostBlockIterator::<'a, ReverseZXColumnPositionIterator>::new(self))
     }
 }

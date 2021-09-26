@@ -23,7 +23,7 @@ pub fn world_entity_selection_effects_entities(
                         *entity, 
                         ConstantRotation { 
                         x_revoloutions_per_second: 0.0,  
-                        y_revoloutions_per_second: 0.25,  
+                        y_revoloutions_per_second: 0.0,  
                     });
                 },
                 None => {

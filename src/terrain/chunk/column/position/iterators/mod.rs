@@ -7,3 +7,7 @@ pub use x_z::*;
 pub use z_x::*;
 pub use reverse_x_z::*;
 pub use reverse_z_x::*;
+
+pub trait MainDimenisionMinimumCheck {
+    fn at_main_dimension_minimum(&self) -> bool;
+}
