@@ -12,6 +12,6 @@ pub fn apply_heading_and_velocity_to_position(
     time: &time::ElapsedTime
 ) {
     let timed_block = debug::start_timed_block(debug::CycleCounter::ApplyHeadingAndVelocityToPosition);
-    position.value  = position.value + (heading.value * (velocity.value * time.seconds));
+    position.0 = position.0 + (heading.value * (velocity.value * time.seconds));
     timed_block.stop();
 }

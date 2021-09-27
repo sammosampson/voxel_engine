@@ -18,7 +18,6 @@ pub fn build_world() -> World {
     let mut world = World::default();
     debug::add_debugging_to_world(&mut world);
     lighting::add_lighting_to_world(&mut world);
-    terrain::add_terrain_to_world(&mut world);
     hero::add_hero_to_world(&mut world);
     world
 }
@@ -33,6 +32,8 @@ pub fn build_schedule() -> Schedule {
         .add_system(input::editor_visibility_from_input_system())
         .add_system(world::world_entity_selection_from_input_system())
         .add_system(input::editor_state_from_input_system())
+        .add_thread_local(terrain::reveal_terrain_system())
+        .flush()
         .add_system(terrain::position_chunks_system())
         .add_system(terrain::tesselate_chunk_front_faces_system())
         .add_system(terrain::tesselate_chunk_back_faces_system())

@@ -12,7 +12,7 @@ pub fn set_world_node_position(
         render_graph
             .find(entity)
             .unwrap()
-            .set_position(Matrix4x4::translation(position.value));
+            .set_position(Matrix4x4::translation(position.into()));
         
         timed_block.stop();
 }

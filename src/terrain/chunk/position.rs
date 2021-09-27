@@ -31,3 +31,12 @@ impl From<ChunkPosition> for WorldEntityId {
     }
 }
 
+impl From<Position> for ChunkPosition {
+    fn from(position: Position) -> Self {
+        Self {
+            x: (position.0.x / (COLUMNS_PER_CHUNK_X as f32 * BLOCK_SIZE)) as i64,
+            z: (position.0.z / (COLUMNS_PER_CHUNK_Z as f32 * BLOCK_SIZE)) as i64
+        }
+    }
+}
+

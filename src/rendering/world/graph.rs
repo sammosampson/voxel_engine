@@ -60,11 +60,15 @@ impl WorldRenderGraph {
     pub fn add_node(&mut self, entity: Entity, node: WorldRenderGraphNode) {
         self.nodes.insert(entity, node);
     }
+
+    pub fn remove_node(&mut self, entity: &Entity) {
+        self.nodes.remove(entity);
+    }
     
     pub fn add_mesh(&mut self, entity: Entity, vertices: Vec<geomtery::Vertex>) {
         self.add_node(entity, WorldRenderGraphNode::new(WorldRenderGraphNodeType::Mesh(MeshGraphNode::new(geomtery::Mesh::new(vertices)))));
     }
-
+    
     pub fn find(&mut self, entity: &Entity) -> Option<&mut WorldRenderGraphNode> {
         self.nodes.get_mut(entity)
     }
