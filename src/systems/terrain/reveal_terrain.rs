@@ -1,7 +1,7 @@
 use crate::prelude::*;
 
 #[system]
-#[read_component(TerrainRevealRadius)]
+#[read_component(TerrainRevealAreaSize)]
 #[read_component(ChunkPosition)]
 #[read_component(Position)]
 pub fn reveal_terrain(world: &SubWorld, command_buffer: &mut CommandBuffer, #[resource] graph: &mut WorldRenderGraph,) {
@@ -57,16 +57,16 @@ fn get_chunks_to_remove(chunks: &Vec<(&Entity, &ChunkPosition)>, where_not_in: &
         .collect()
 }
 
-fn query_terrain_reveal<'a>() -> legion::query::Query<(&'a TerrainRevealRadius, &'a Position)> {
-    <(&TerrainRevealRadius, &Position)>::query()
+fn query_terrain_reveal<'a>() -> legion::query::Query<(&'a TerrainRevealAreaSize, &'a Position)> {
+    <(&TerrainRevealAreaSize, &Position)>::query()
 }
 
 fn query_current_chunk_positions<'a>() -> legion::query::Query<(Entity, &'a ChunkPosition)> {
     <(Entity, &ChunkPosition)>::query()
 }
 
-fn get_positions_in_radius(radius: &TerrainRevealRadius, position: &Position) -> Vec<ChunkPosition> {
-    let chunk_position = ChunkPosition::from(*position);
-    println!("hero chunk position {:?} {:?}", position, chunk_position);
-    vec!(chunk_position)
+fn get_positions_in_radius(radius: TerrainRevealAreaSize, position: Position) -> Vec<ChunkPosition> {
+    TerrainRevealArea::new(radius, position)
+        .iter()
+        .collect()
 }

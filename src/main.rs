@@ -16,7 +16,7 @@ mod rotation;
 mod hero;
 mod physics;
 mod world;
-mod exit_state;
+mod game_state;
 
 mod prelude {
     pub use std::collections::HashMap; 
@@ -26,7 +26,7 @@ mod prelude {
     pub use legion::*;
     pub use legion::systems::CommandBuffer;
     pub use legion::world::SubWorld;
-    pub use crate::exit_state::*;
+    pub use crate::game_state::*;
     pub use crate::world::*;
     pub use crate::rendering::*;
     pub use crate::events::*;

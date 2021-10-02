@@ -22,14 +22,6 @@ pub struct EditorState {
     pub windows_visible: HashMap<String, bool>
 }
 
-#[derive(Default)]
-pub struct EditorVisibility {
-}
-
-#[derive(Default)]
-pub struct EditorVisible {
-}
-
 impl EditorState {
     pub fn set_window_visibility(&mut self, visible: bool, window_name: String) {
         self.windows_visible.insert(window_name, visible);

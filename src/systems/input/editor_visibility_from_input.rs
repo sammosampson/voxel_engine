@@ -1,13 +1,11 @@
 use crate::prelude::*;
 
-#[system(simple)]
-#[read_component(EditorVisibility)]
-#[read_component(EditorVisible)]
+#[system]
+#[filter(component::<EditorState>())]
 pub fn editor_visibility_from_input(
-    world: &legion::world::SubWorld,
     #[resource] event_channel: &mut EventChannel<SystemEvent>,
     #[resource] event_registration: &mut EventChannelRegistrar,
-    command_buffer: &mut legion::systems::CommandBuffer
+    #[resource] game_state: &mut GameState
 ) {    
     let timed_block = start_timed_block(CycleCounter::EditorVisibilityFromInput);
 
@@ -19,7 +17,7 @@ pub fn editor_visibility_from_input(
         match event {
             SystemEvent::KeyboardAction { state, button} => {
                 if is_editor_toggle_button_pressed(button, state) {
-                    toggle_editor_visibility(world, command_buffer);
+                    toggle_editor_visibility(game_state);
                 }
             },
             _ => {}
@@ -34,21 +32,9 @@ fn is_editor_toggle_button_pressed(button: &KeyboardButton, state: &InputState
     button.is_pressed(glium::glutin::event::VirtualKeyCode::F12, state)
 }
 
-fn toggle_editor_visibility(world: &world::SubWorld, command_buffer: &mut systems::CommandBuffer
-) {
-    let mut query = <legion::Entity>
-        ::query()
-        .filter(component::<EditorVisibility>() & component::<EditorVisible>());
-
-    for entity in query.iter(world) {
-        command_buffer.remove_component::<EditorVisible>(*entity);
-    }
-
-    let mut query = <legion::Entity>
-        ::query()
-        .filter(component::<EditorVisibility>() & !component::<EditorVisible>());
-
-    for entity in query.iter(world) {
-        command_buffer.add_component(*entity, EditorVisible::default());
+fn toggle_editor_visibility(state: &mut GameState) {
+    match state {
+        GameState::Playing => *state = GameState::Editing,
+        GameState::Editing => *state = GameState::Playing,
     }
 }

@@ -1,7 +1,6 @@
 use crate::prelude::*;
 
 #[system(for_each)]
-#[filter(!component::<EditorVisible>())]
 pub fn follow_with_attached_camera(
     camera: &mut Camera,
     attach_camera: &AttachCamera,

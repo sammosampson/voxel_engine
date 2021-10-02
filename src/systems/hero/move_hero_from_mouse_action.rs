@@ -1,7 +1,6 @@
 use crate::prelude::*;
 
 #[system(for_each)]
-#[filter(!component::<EditorVisible>())]
 pub fn move_hero_from_mouse_action(
     input: &MouseInput,
     velocity: &mut Velocity,

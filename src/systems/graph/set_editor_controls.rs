@@ -13,6 +13,5 @@ pub fn set_editor_controls (entity: &Entity, buffer: &mut CommandBuffer, #[resou
     graph.add_control(create_entities_window());
     
     buffer.add_component(*entity, EditorState::default());
-    buffer.add_component(*entity, EditorVisibility::default());
     timed_block.stop();
 }

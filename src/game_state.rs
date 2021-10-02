@@ -1,3 +1,9 @@
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum GameState {
+    Playing,
+    Editing
+}
+
 pub fn create_exit_state_notifier() -> ExitStateNotifier {
     ExitStateNotifier::default()
 }

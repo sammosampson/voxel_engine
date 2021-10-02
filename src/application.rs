@@ -3,7 +3,8 @@ use crate::prelude::*;
 pub struct Application {
     pub world: World, 
     pub resources: Resources,
-    schedule: Schedule,
+    play_schedule: Schedule,
+    editor_schedule: Schedule,
     event_loop: SystemEventLoop,
     screen_renderer: ScreenRenderer
 }
@@ -16,12 +17,14 @@ impl Application {
 
         let world = build_world();
         let resources = build_resources();
-        let schedule = build_schedule();
+        let play_schedule = build_play_schedule();
+        let editor_schedule = build_editor_schedule();
        
         Self {
             world,
             resources, 
-            schedule,
+            play_schedule,
+            editor_schedule,
             event_loop,
             screen_renderer
         }
@@ -50,7 +53,11 @@ impl Application {
     }
 
     fn execute_schedule(&mut self) {
-        &mut self.schedule.execute(&mut self.world, &mut self.resources);
+        let current_state = self.resources.get::<GameState>().unwrap().clone();
+        match current_state {
+            GameState::Playing => &mut self.play_schedule.execute(&mut self.world, &mut self.resources),
+            GameState::Editing => &mut self.editor_schedule.execute(&mut self.world, &mut self.resources),
+        };        
     }
 
     fn render(&mut self) {
@@ -72,6 +79,7 @@ fn build_resources() -> Resources {
     let event_channel_registrar = create_system_event_channel_registrar(&mut system_event_channel);
     let editor_render_graph = EditorRenderGraph::new();
     let world_render_graph = WorldRenderGraph::new();
+    let game_state = GameState::Playing;
         
     let mut resources = Resources::default();
     &mut resources.insert(exit_state_notifier);
@@ -80,5 +88,6 @@ fn build_resources() -> Resources {
     &mut resources.insert(event_channel_registrar);
     &mut resources.insert(editor_render_graph);
     &mut resources.insert(world_render_graph);
+    &mut resources.insert(game_state);
     resources
 }

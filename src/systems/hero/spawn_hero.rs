@@ -17,7 +17,6 @@ pub fn spawn_hero(
     let time = ElapsedTime::default();
     let mesh =  unit_cube(Colour::green());
     let input = MouseInput::default();
-    let editor_visibility = EditorVisibility::default();
     
     let attach_camera = AttachCamera {  
         offset_position: Vector4::position(0.0, 1.0, 0.0), 
@@ -36,7 +35,7 @@ pub fn spawn_hero(
 
     let visible = Visible(true);
     let render_style = RenderStyle::Fill;
-    let terrain_revealer = TerrainRevealRadius(2);
+    let terrain_revealer = TerrainRevealAreaSize(2);
     
     let spawned = command_buffer.push((
         world_id,
@@ -49,7 +48,6 @@ pub fn spawn_hero(
         input, 
     ));
 
-    command_buffer.add_component(spawned, editor_visibility);
     command_buffer.add_component(spawned, attach_camera);
     command_buffer.add_component(spawned, camera);
     command_buffer.add_component(spawned, window_size);
