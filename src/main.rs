@@ -19,11 +19,15 @@ mod world;
 mod game_state;
 
 mod prelude {
+    pub use std::ops::Deref;
+    pub use std::ops::Add;
+    pub use std::ops::Sub;
     pub use std::collections::HashMap; 
     pub use std::time::Instant; 
     pub use itertools::Itertools; 
     pub use shrev::{EventChannel, EventIterator};
     pub use legion::*;
+    pub use legion::query::Query;
     pub use legion::systems::CommandBuffer;
     pub use legion::world::SubWorld;
     pub use crate::game_state::*;

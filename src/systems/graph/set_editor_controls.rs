@@ -11,6 +11,7 @@ pub fn set_editor_controls (entity: &Entity, buffer: &mut CommandBuffer, #[resou
     graph.add_control(create_camera_window());
     graph.add_control(create_measurements_window());
     graph.add_control(create_entities_window());
+    graph.add_control(create_chunks_window());
     
     buffer.add_component(*entity, EditorState::default());
     timed_block.stop();

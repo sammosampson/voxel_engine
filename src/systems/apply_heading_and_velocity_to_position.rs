@@ -1,17 +1,16 @@
 use legion::*;
-use crate::position;
-use crate::physics;
-use crate::debug;
-use crate::time;
+use crate::prelude::*;
 
 #[system(for_each)]
 pub fn apply_heading_and_velocity_to_position(
-    velocity: &physics::Velocity,
-    heading: &physics::Heading,
-    position: &mut position::Position,
-    time: &time::ElapsedTime
+    velocity: &Velocity,
+    heading: &Heading,
+    position: &mut Position,
+    last_position: &mut LastPosition,
+    time: &ElapsedTime
 ) {
-    let timed_block = debug::start_timed_block(debug::CycleCounter::ApplyHeadingAndVelocityToPosition);
-    position.0 = position.0 + (heading.value * (velocity.value * time.seconds));
+    let timed_block = start_timed_block(CycleCounter::ApplyHeadingAndVelocityToPosition);
+    *last_position = LastPosition::from(*position);
+    *position = *position + (heading.value * (velocity.value * time.seconds));
     timed_block.stop();
 }

@@ -246,7 +246,7 @@ impl EditorRenderer {
         ui.with_layout(egui::Layout::top_down_justified(egui::Align::Center), |ui| ui.label(format!("{:.2}", value)));
     }
 
-    fn render_int(&self, ui: &mut egui::Ui, value: &mut u64) {
+    fn render_int(&self, ui: &mut egui::Ui, value: &mut i64) {
         ui.with_layout(egui::Layout::top_down_justified(egui::Align::Center), |ui| ui.label(value.to_string()));
     }
 }

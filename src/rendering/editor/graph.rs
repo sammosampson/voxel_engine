@@ -115,8 +115,8 @@ pub enum EditorRenderGraphData {
     String { value: String },
     Boolean { value: bool },
     Float { value: f32 },
-    Int { value: u64 },
-    Vector4 { value: math::Vector4 }
+    Int { value: i64 },
+    Vector4 { value: math::Vector4 },
 }
 
 #[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
@@ -133,7 +133,11 @@ pub enum EditorRenderGraphDataItem {
     CameraDirection,
     CameraUp,
     EntityWindowVisibiity,
-    EntityNode
+    EntityNode,
+    ChunksWindowVisibiity,
+    ChunkRow,
+    ChunkX,
+    ChunkZ
 }
 
 impl Display for EditorRenderGraphDataItem {
@@ -142,6 +146,7 @@ impl Display for EditorRenderGraphDataItem {
             EditorRenderGraphDataItem::MeasurementWindowVisibiity => f.write_str("Measurements"),
             EditorRenderGraphDataItem::CameraWindowVisibiity => f.write_str("Camera"),
             EditorRenderGraphDataItem::EntityWindowVisibiity => f.write_str("Entities"),
+            EditorRenderGraphDataItem::ChunksWindowVisibiity => f.write_str("Chunks"),
             EditorRenderGraphDataItem::CycleMeasurement => f.write_str("Cycles"),
             EditorRenderGraphDataItem::CyclePercentage => f.write_str("Cycles %"),
             EditorRenderGraphDataItem::HitMeasurement => f.write_str("Hits"),
@@ -149,6 +154,8 @@ impl Display for EditorRenderGraphDataItem {
             EditorRenderGraphDataItem::CameraPosition => f.write_str("Position"),
             EditorRenderGraphDataItem::CameraDirection => f.write_str("Direction"),
             EditorRenderGraphDataItem::CameraUp => f.write_str("Up"),
+            EditorRenderGraphDataItem::ChunkX => f.write_str("Chunk X"),
+            EditorRenderGraphDataItem::ChunkZ => f.write_str("Chunk Y"),
             _ => f.write_str("")
         }
     }

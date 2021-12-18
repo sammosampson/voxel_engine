@@ -1,72 +1,25 @@
 use crate::prelude::*;
 
-#[system]
-#[read_component(TerrainRevealAreaSize)]
-#[read_component(ChunkPosition)]
-#[read_component(Position)]
-pub fn reveal_terrain(world: &SubWorld, command_buffer: &mut CommandBuffer, #[resource] graph: &mut WorldRenderGraph,) {
-    query_terrain_reveal()
-        .iter(world)
-        .for_each(|(radius, position)| {
-            let positions = get_positions_in_radius(radius, position);
-            
-            let all_chunks: Vec<(&Entity, &ChunkPosition)> = query_current_chunk_positions()
-                .iter(world)
-                .collect();
+#[system(for_each)]
+#[filter(component::<InitialTerrainBuilt>())]
+#[write_component(ChunkPosition)]
+pub fn reveal_terrain(world: &mut SubWorld, position: &Position, last_position: &LastPosition) {
+    let timed_block = start_timed_block(CycleCounter::RevealTerrain);
 
-            let all_chunk_positions: Vec<ChunkPosition> = all_chunks
-                .iter()
-                .map(|(_, position)| **position)
-                .collect();
-
-            let chunks_to_add: Vec<ChunkPosition> = positions
-                .iter()
-                .filter(|position| !all_chunk_positions.contains(*position))
-                .map(|position| *position)
-                .collect();
-
-            let chunks_to_remove = get_chunks_to_remove(&all_chunks, &positions);
-
-            for position in chunks_to_add {
-                println!("adding chunk {:?}", position);
-                command_buffer.push((
-                    WorldEntityId::from(position),
-                    position,
-                    full_chunk_shape(),
-                    RenderStyle::Fill,
-                    Visible(true),
-                    ElapsedTime::default(),
-                    Rotation::default()
-                ));
-            }
-
-            for chunk_entity in chunks_to_remove {
-                println!("removing chunk {:?}", position);
-                graph.remove_node(&chunk_entity);
-                command_buffer.remove(chunk_entity);
-            }
-        })
+    let reveal_area_chunk_position = ChunkPosition::from(**last_position);
+    let new_reveal_area_chunk_position = ChunkPosition::from(**position);
     
-}
+    if reveal_area_chunk_position == new_reveal_area_chunk_position {
+        return;
+    }
 
-fn get_chunks_to_remove(chunks: &Vec<(&Entity, &ChunkPosition)>, where_not_in: &Vec<ChunkPosition>) -> Vec<Entity> {
-    chunks
-        .iter()
-        .filter(|(_, position)| !where_not_in.contains(*position))
-        .map(|(entity, _)| **entity)
-        .collect()
-}
+    let chunk_offset = new_reveal_area_chunk_position - reveal_area_chunk_position;
 
-fn query_terrain_reveal<'a>() -> legion::query::Query<(&'a TerrainRevealAreaSize, &'a Position)> {
-    <(&TerrainRevealAreaSize, &Position)>::query()
-}
+    println!("{:?} {:?} {:?}",  reveal_area_chunk_position, new_reveal_area_chunk_position, chunk_offset);
 
-fn query_current_chunk_positions<'a>() -> legion::query::Query<(Entity, &'a ChunkPosition)> {
-    <(Entity, &ChunkPosition)>::query()
-}
+    <&mut ChunkPosition>::query()
+        .iter_mut(world)
+        .for_each(|chunk_position| *chunk_position = *chunk_position + chunk_offset);        
 
-fn get_positions_in_radius(radius: TerrainRevealAreaSize, position: Position) -> Vec<ChunkPosition> {
-    TerrainRevealArea::new(radius, position)
-        .iter()
-        .collect()
+    timed_block.stop();
 }

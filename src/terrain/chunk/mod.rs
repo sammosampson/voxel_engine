@@ -20,7 +20,7 @@ pub fn full_chunk_shape() -> Chunk {
 const CHUNK_DIMENSIONS:usize = COLUMNS_PER_CHUNK_Z * COLUMNS_PER_CHUNK_X;
 
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Chunk {
     pub columns: [u16; CHUNK_DIMENSIONS]
 }
